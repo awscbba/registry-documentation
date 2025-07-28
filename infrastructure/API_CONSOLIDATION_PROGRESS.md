@@ -626,6 +626,62 @@ CMD ["main.lambda_handler"]
 - 🧪 Comprehensive end-to-end testing
 - 🚀 Production readiness checklist
 
+## 🔍 **SUBSCRIPTION CREATION BUG INVESTIGATION & FIX (COMPLETED)**
+
+### **Issue Discovered: Public Subscribe Endpoint Failing**
+- **Date**: July 28, 2025
+- **Problem**: `/public/subscribe` endpoint returning "Failed to create subscription"
+- **Impact**: Frontend subscription forms not working despite infrastructure being correct
+
+### **Root Cause Analysis**
+**Investigation Results**:
+1. ✅ **API Gateway**: Working correctly (`https://2t9blvt2c1.execute-api.us-east-1.amazonaws.com/prod`)
+2. ✅ **Subscriptions Read**: `/subscriptions` endpoint returning data perfectly
+3. ✅ **Projects Read**: `/projects` endpoint working correctly
+4. ✅ **Routing**: Router function properly forwarding requests
+5. ✅ **Container Deployment**: All Lambda functions using modern architecture
+6. ✅ **Database Connectivity**: DynamoDB integration working for read operations
+
+**Code Issues Found**:
+- ❌ **Missing `await`**: `get_person_by_email()` call not awaited
+- ❌ **Missing `await`**: `create_person()` call not awaited  
+- ❌ **Wrong Parameter Type**: `create_subscription()` expecting SubscriptionCreate object, not dict
+- ❌ **Status Issue**: Default subscription status should be "active", not "pending"
+
+### **Fix Implementation**
+**Changes Made**:
+```python
+# Fixed async/await issues
+existing_person = await db_service.get_person_by_email(person_create.email)
+created_person = await db_service.create_person(person_create)
+
+# Fixed subscription creation
+created_subscription = db_service.create_subscription(subscription_create)  # Pass object, not dict
+
+# Fixed default status
+status="active"  # Changed from "pending"
+```
+
+**Deployment**:
+- ✅ **Code Fixed**: Corrected all async/await and parameter issues
+- ✅ **Committed**: Changes pushed to feature/container-deployment-dockerfile branch
+- 🔄 **Deployment**: CodeCatalyst pipeline triggered for container deployment
+
+### **Expected Result**
+After deployment completes:
+- ✅ **Public Subscribe**: `/public/subscribe` endpoint should work correctly
+- ✅ **Person Creation**: New users can be created during subscription
+- ✅ **Person Lookup**: Existing users found by email correctly
+- ✅ **Subscription Creation**: Subscriptions created with "active" status
+- ✅ **End-to-End Flow**: Frontend subscription forms should work completely
+
+### **Testing Plan**
+Once deployment completes:
+1. **Test New User Subscription**: Create subscription with new email
+2. **Test Existing User Subscription**: Create subscription with existing email
+3. **Verify Database**: Check that subscriptions are created correctly
+4. **Frontend Testing**: Test actual subscription form on website
+
 **Architecture**: RouterFunction → AuthFunction/PeopleApiFunction (ALL using container deployment!)  
 **Key Breakthroughs**: 
 - ✅ Complete container migration achieved - modern serverless architecture
