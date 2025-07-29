@@ -930,14 +930,16 @@ ENT SESSION STATUS - SUBSCRIPTION CREATION FIX**
 ### **✅ COMPLETED IN THIS SESSION**
 
 #### **1. Root Cause Confirmation**
-- ✅ **Issue Confirmed**: PersonCreate model validation failure
+- ✅ **Issue Confirmed**: PersonCreate model validation failure in BOTH v1 and v2 endpoints
 - ✅ **Data Mismatch**: Frontend sends `name`, model expects `firstName`/`lastName`
 - ✅ **Missing Fields**: PersonCreate requires phone, dateOfBirth, address with defaults
+- ✅ **Verified Both Versions**: Both `/v1/public/subscribe` and `/v2/public/subscribe` had identical issue
 
 #### **2. Fix Implementation & Testing**
 - ✅ **Data Transformation**: Convert `name` → `firstName` + `lastName`
 - ✅ **Default Values**: Set phone="", dateOfBirth="1990-01-01", empty address
-- ✅ **Applied to Both Versions**: v1 and v2 endpoints both fixed
+- ✅ **Applied to Both Versions**: v1 and v2 endpoints both fixed with identical logic
+- ✅ **Edge Case Testing**: Single names (e.g., "Madonna") handled correctly
 - ✅ **Local Testing**: PersonCreate validation successful with test data
 - ✅ **Code Quality**: All git hooks passed (black formatting, flake8 linting)
 
@@ -951,9 +953,16 @@ ENT SESSION STATUS - SUBSCRIPTION CREATION FIX**
 
 #### **Immediate Actions Required**
 1. **Merge Feature Branch**: Merge `feature/container-deployment-dockerfile` into main
-2. **Deploy to Production**: Trigger deployment pipeline
+2. **Deploy to Production**: Trigger deployment pipeline  
 3. **End-to-End Testing**: Test subscription form with real frontend data
-4. **Verify Fix**: Confirm both v1 and v2 endpoints work correctly
+4. **Verify Both Endpoints**: Confirm both v1 and v2 endpoints work correctly
+
+#### **Verification Checklist**
+- [ ] Test v1 endpoint with `{"person": {"name": "Test User", "email": "test@example.com"}, "projectId": "..."}`
+- [ ] Test v2 endpoint with same data format
+- [ ] Test single name edge case (e.g., "Madonna")
+- [ ] Verify subscription creation completes successfully
+- [ ] Confirm frontend subscription form works end-to-end
 
 #### **Test Commands Ready**
 ```bash
