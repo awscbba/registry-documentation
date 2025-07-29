@@ -677,6 +677,31 @@ After deployment completes:
 - ✅ **Subscription Creation**: Subscriptions created with "active" status
 - ✅ **End-to-End Flow**: Frontend subscription forms should work completely
 
+### **Post-Deployment Testing Results**
+- **Date**: July 29, 2025
+- **Deployment Status**: ✅ **COMPLETED** - All fixes deployed successfully
+- **API Health**: ✅ Working - Health endpoint responding correctly
+- **Read Operations**: ✅ Working - `/subscriptions` and `/projects` endpoints working
+- **Write Operations**: ❌ **STILL FAILING** - `/public/subscribe` returns HTTP 500
+
+### **Current Issue Analysis**
+**Symptoms**:
+- HTTP 500 "Failed to create subscription" error
+- Read operations work perfectly (can retrieve subscriptions and projects)
+- Write operations fail (cannot create new subscriptions)
+
+**Likely Causes**:
+1. **Database Write Permissions**: Lambda may lack DynamoDB write permissions
+2. **Model Validation**: PersonCreate model may require additional fields
+3. **Database Service Initialization**: Write operations may fail during service setup
+4. **Async/Await Issues**: Despite fixes, there may be additional async issues
+
+**Next Investigation Steps**:
+1. **Check Lambda Logs**: Review CloudWatch logs for detailed error messages
+2. **Verify DynamoDB Permissions**: Ensure Lambda has write permissions to all tables
+3. **Test Model Validation**: Verify PersonCreate model requirements
+4. **Database Service Debug**: Check if database service initializes correctly for writes
+
 ### **Testing Plan**
 Once deployment completes:
 1. **Test New User Subscription**: Create subscription with new email
