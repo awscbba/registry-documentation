@@ -735,12 +735,48 @@ After deployment completes:
 **Status**: ✅ **READY** - Versioned API implemented and tested
 **Deployment Strategy**: Deploy versioned API, test v2 endpoints, migrate frontend gradually
 
-**Next Steps**:
-1. **Deploy Versioned API**: Merge and deploy to production
-2. **Test V2 Endpoints**: Verify `/v2/public/subscribe` works correctly
-3. **Frontend Migration**: Update frontend to use v2 endpoints
-4. **Monitor and Validate**: Ensure both versions work as expected
-5. **Deprecate V1**: Eventually deprecate v1 once v2 is stable
+## 🧪 **POST-DEPLOYMENT TESTING RESULTS**
+
+### **Versioned API Deployment Status**
+- **Date**: July 29, 2025
+- **Deployment**: ✅ **SUCCESSFUL** - Versioned API deployed to production
+- **Health Check**: ✅ Service shows "people-register-api-versioned" with versions ["v1", "v2"]
+
+### **V2 Endpoint Testing Results**
+**Read Operations**: ✅ **WORKING PERFECTLY**
+- `/v2/subscriptions`: Returns data with version metadata and count
+- `/v2/projects`: Enhanced responses with version info
+- Version differentiation working correctly
+
+**Write Operations**: ❌ **STILL FAILING**
+- `/v2/public/subscribe`: Returns "Failed to create subscription" (HTTP 500)
+- `/v1/public/subscribe`: Same error (confirms it's not version-specific)
+- Both versions fail identically
+
+### **Root Cause Analysis**
+**What's Working**:
+- ✅ API versioning implementation successful
+- ✅ Container deployment working
+- ✅ Routing between v1/v2 working
+- ✅ Database read operations working
+- ✅ Enhanced v2 responses with metadata
+
+**What's Failing**:
+- ❌ Database write operations (subscription creation)
+- ❌ Both v1 and v2 fail identically
+- ❌ Suggests deeper issue than async/await fixes
+
+**Likely Root Causes**:
+1. **Database Write Permissions**: Lambda may lack DynamoDB write permissions for subscriptions
+2. **Person Creation Permissions**: May lack permissions to create new people
+3. **Model Validation**: PersonCreate model may have validation issues
+4. **Service Initialization**: Database service may fail to initialize write operations
+
+### **Next Investigation Steps**:
+1. **Check CloudWatch Logs**: Review Lambda logs for detailed error messages
+2. **Verify IAM Permissions**: Ensure Lambda has DynamoDB write permissions
+3. **Test Person Creation**: Try creating a person separately to isolate the issue
+4. **Database Service Debug**: Check if database service initializes correctly for writes
 
 ### **Testing Plan**
 Once deployment completes:
