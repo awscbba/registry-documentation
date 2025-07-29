@@ -683,23 +683,64 @@ After deployment completes:
 - **Production Status**: 🔄 **PENDING** - Fixes not yet deployed to production (working on feature branch)
 - **Current Production**: ❌ `/public/subscribe` still returns "Failed to create subscription"
 
-### ### **Ready for Production Deployment**
-**All Fixes Completed on Feature Branch**:
-- ✅ **Async/Await Issues**: Fixed missing `await` keywords in subscription creation
-- ✅ **Parameter Type Issues**: Fixed subscription creation to pass SubscriptionCreate object
-- ✅ **Linting Issues**: Resolved all whitespace and formatting problems  
-- ✅ **Test Issues**: Skipped API documentation tests (docs moved to centralized repo)
-- ✅ **Code Formatting**: Applied black formatting to all files
+### ## 🚀 **API VERSIONING IMPLEMENTATION (COMPLETED)**
 
+### **Decision 9: Implement API Versioning for Safe Deployment**
+- **Date**: July 29, 2025
+- **Context**: Subscription fixes not working in production, need safe deployment strategy
+- **Solution**: Implement v1/v2 API versioning to deploy fixes safely while maintaining compatibility
+
+### **Versioning Strategy Implemented**
+**API Structure**:
+```
+/health                    # Unversioned health check with version info
+/v1/subscriptions         # Legacy version (current production behavior)
+/v1/projects              # Legacy version  
+/v1/public/subscribe      # Legacy version (with known issues)
+/v2/subscriptions         # Enhanced version with improvements
+/v2/projects              # Enhanced version with metadata
+/v2/public/subscribe      # Fixed version with proper async/await
+/subscriptions            # Legacy redirect to v1 (backward compatibility)
+/projects                 # Legacy redirect to v1
+/public/subscribe         # Legacy redirect to v1
+```
+
+### **V2 Improvements Over V1**
+- ✅ **Fixed Async/Await Issues**: Proper `await` keywords in subscription creation
+- ✅ **Fixed Parameter Types**: SubscriptionCreate object instead of dict
+- ✅ **Active Status**: Subscriptions created with "active" status instead of "pending"
+- ✅ **Enhanced Responses**: Include version info and metadata
+- ✅ **Better Error Handling**: Improved logging and error messages
+
+### **Backward Compatibility**
+- ✅ **V1 Endpoints**: Maintain exact current behavior (including bugs)
+- ✅ **Legacy Endpoints**: Unversioned endpoints redirect to v1
+- ✅ **No Breaking Changes**: Existing integrations continue to work
+- ✅ **Gradual Migration**: Frontend can migrate to v2 incrementally
+
+### **Files Created**
+- ✅ `src/handlers/versioned_api_handler.py`: Main versioned API implementation
+- ✅ `main_versioned.py`: Versioned Lambda entry point
+- ✅ `test_versioned_api.py`: Comprehensive testing script
+- ✅ Updated `main.py`: Now uses versioned handler
+
+### **Testing Results**
+- ✅ **All Endpoints Working**: v1, v2, and legacy endpoints tested
+- ✅ **Backward Compatibility**: Legacy endpoints properly redirect to v1
+- ✅ **Version Metadata**: v2 endpoints include version information
+- ✅ **Health Check**: Shows available versions
+
+### **Ready for Production Deployment**
 **Branch**: `feature/container-deployment-dockerfile`
-**Status**: Ready for Pull Request to merge into `main` branch
-**Expected Result**: Once merged and deployed, `/public/subscribe` endpoint should work correctly
+**Status**: ✅ **READY** - Versioned API implemented and tested
+**Deployment Strategy**: Deploy versioned API, test v2 endpoints, migrate frontend gradually
 
 **Next Steps**:
-1. **Create Pull Request**: Merge feature branch into main
-2. **Deploy to Production**: Trigger production deployment from main branch  
-3. **Test Subscription Creation**: Verify fixes work in production
-4. **Complete End-to-End Testing**: Test frontend subscription forms
+1. **Deploy Versioned API**: Merge and deploy to production
+2. **Test V2 Endpoints**: Verify `/v2/public/subscribe` works correctly
+3. **Frontend Migration**: Update frontend to use v2 endpoints
+4. **Monitor and Validate**: Ensure both versions work as expected
+5. **Deprecate V1**: Eventually deprecate v1 once v2 is stable
 
 ### **Testing Plan**
 Once deployment completes:
