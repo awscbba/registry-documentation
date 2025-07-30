@@ -998,3 +998,151 @@ Once deployed, the subscription creation issue should be **COMPLETELY RESOLVED**
 **Status**: 🚀 **READY FOR PRODUCTION DEPLOYMENT**  
 **Confidence Level**: High - Local testing confirms fix resolves the issue  
 **Next Session Goal**: Verify production deployment success and complete end-to-end testing
+##
+ 🚀 **ENHANCED SUBSCRIPTION WORKFLOW DEVELOPMENT**
+
+### **Session Date**: July 29, 2025
+### **Objective**: Implement intelligent subscription workflow with user detection and login requirements
+
+## 📋 **FEATURE REQUIREMENTS**
+
+### **Enhanced Subscription Logic**
+1. **New Users**: Create account + subscription directly
+2. **Existing Users**: Require login before subscription
+3. **Already Subscribed**: Show appropriate notification
+
+### **Business Rules Confirmed**
+- ✅ **Subscription Status**: All subscriptions start as "pending" (require admin approval)
+- ✅ **Email Uniqueness**: Enforced via EmailIndex GSI
+- ✅ **User Experience**: Simplified form with intelligent validation
+
+## 🛠️ **IMPLEMENTATION PROGRESS**
+
+### **✅ API Development (registry-api)**
+**Branch**: `feat/enhanced-subscription-workflow`
+
+#### **New Endpoints Added**
+1. **Person Existence Check**
+   ```
+   POST /v2/people/check-email
+   Body: {"email": "user@example.com"}
+   Response: {"exists": boolean, "version": "v2"}
+   ```
+
+2. **Subscription Status Check**
+   ```
+   POST /v2/subscriptions/check
+   Body: {"email": "user@example.com", "projectId": "uuid"}
+   Response: {"subscribed": boolean, "subscription_status": "pending|active", "version": "v2"}
+   ```
+
+#### **Enhanced Public Subscribe Endpoint**
+- ✅ **Simplified Data Format**: Accepts `{person: {name, email}, projectId}`
+- ✅ **V2 Endpoint**: Uses `/v2/public/subscribe`
+- ✅ **Proper Status**: Creates "pending" subscriptions requiring approval
+
+### **✅ Frontend Development (registry-frontend)**
+**Branch**: `feat/enhanced-subscription-workflow`
+
+#### **Simplified Form UI**
+- ✅ **Reduced Fields**: Only name, email, and optional notes
+- ✅ **Smart Validation**: Pre-submission user checks
+- ✅ **Enhanced UX**: Clear messaging for different scenarios
+
+#### **Workflow Logic Implementation**
+```typescript
+// 1. Check person existence
+const personCheck = await fetch('/v2/people/check-email')
+
+if (personCheck.exists) {
+  // 2. Check subscription status
+  const subCheck = await fetch('/v2/subscriptions/check')
+  
+  if (subCheck.subscribed) {
+    // Show: "Already subscribed, please login"
+  } else {
+    // Show: "Account exists, please login to subscribe"
+  }
+} else {
+  // 3. Create new subscription
+  await fetch('/v2/public/subscribe', simplifiedData)
+}
+```
+
+#### **User Experience Messages**
+- ✅ **New User**: "Subscription sent! Pending admin approval, you'll be notified by email"
+- ✅ **Existing User**: "Account exists with this email. Please login to subscribe"
+- ✅ **Already Subscribed**: "Already subscribed. Please login to view status"
+
+## 🎯 **TECHNICAL ACHIEVEMENTS**
+
+### **API Enhancements**
+- ✅ **Endpoint Consistency**: All new endpoints use v2 versioning
+- ✅ **Error Handling**: Proper HTTP status codes and error messages
+- ✅ **Data Validation**: Input validation for all new endpoints
+- ✅ **Database Integration**: Uses existing EmailIndex GSI for efficient lookups
+
+### **Frontend Improvements**
+- ✅ **Form Simplification**: Reduced from 10+ fields to 3 essential fields
+- ✅ **Smart UX**: Prevents duplicate submissions and guides users appropriately
+- ✅ **API Integration**: Proper error handling and user feedback
+- ✅ **Responsive Design**: Maintains existing styling and mobile compatibility
+
+## 📊 **CURRENT STATUS**
+
+### **✅ COMPLETED**
+- ✅ **API Endpoints**: All 3 new endpoints implemented and tested
+- ✅ **Frontend Logic**: Complete workflow implementation
+- ✅ **Form Redesign**: Simplified and enhanced user interface
+- ✅ **Error Handling**: Comprehensive error scenarios covered
+- ✅ **Code Quality**: All changes committed to feature branches
+
+### **🔄 PENDING**
+- 🔄 **API Deployment**: Deploy new endpoints to production
+- 🔄 **Frontend Deployment**: Deploy enhanced subscription form
+- 🔄 **End-to-End Testing**: Test all workflow scenarios in production
+- 🔄 **User Acceptance**: Validate improved user experience
+
+## 🚀 **DEPLOYMENT PLAN**
+
+### **Phase 1: API Deployment**
+1. **Merge API Branch**: `feat/enhanced-subscription-workflow` → `main`
+2. **Deploy Backend**: Trigger API deployment pipeline
+3. **Verify Endpoints**: Test new endpoints in production
+
+### **Phase 2: Frontend Deployment**
+1. **Merge Frontend Branch**: `feat/enhanced-subscription-workflow` → `main`
+2. **Deploy Frontend**: Build and deploy to CloudFront
+3. **Verify Integration**: Test complete workflow end-to-end
+
+### **Phase 3: Validation**
+1. **Test New Users**: Verify account creation + subscription flow
+2. **Test Existing Users**: Verify login requirement messaging
+3. **Test Duplicates**: Verify already-subscribed user messaging
+4. **Admin Workflow**: Verify pending subscriptions appear for approval
+
+## 🎯 **EXPECTED BENEFITS**
+
+### **User Experience**
+- ✅ **Simplified Process**: Faster subscription with minimal required fields
+- ✅ **Clear Guidance**: Users know exactly what to do in each scenario
+- ✅ **Prevents Confusion**: No duplicate subscriptions or unclear states
+- ✅ **Professional Flow**: Proper login requirements for existing users
+
+### **Administrative Benefits**
+- ✅ **Clean Data**: No duplicate accounts or subscriptions
+- ✅ **Proper Workflow**: All subscriptions go through approval process
+- ✅ **User Management**: Clear distinction between new and existing users
+- ✅ **Audit Trail**: Proper tracking of subscription requests
+
+### **Technical Benefits**
+- ✅ **API Consistency**: All endpoints follow v2 versioning standards
+- ✅ **Database Efficiency**: Leverages EmailIndex GSI for fast lookups
+- ✅ **Error Prevention**: Validates data before processing
+- ✅ **Maintainability**: Clean, well-documented code with proper separation
+
+---
+
+**Status**: 🎯 **READY FOR DEPLOYMENT**  
+**Next Session Goal**: Deploy and validate enhanced subscription workflow in production  
+**Confidence Level**: High - All components implemented and tested locally
