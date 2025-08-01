@@ -12,11 +12,42 @@ https://api.example.com/v1
 
 ## Authentication
 
-Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:
+The API uses JWT-based authentication for secure access to protected endpoints. 
+
+### Getting Started
+
+1. **Login**: Use `/auth/login` to authenticate and receive tokens
+2. **Access Protected Endpoints**: Include the JWT token in the Authorization header
+3. **Token Refresh**: Tokens expire after 1 hour (refresh tokens valid for 7 days)
+
+### Authorization Header Format
 
 ```
 Authorization: Bearer <your-jwt-token>
 ```
+
+### Admin Credentials
+
+For admin access, use the following credentials:
+- **Email**: `admin@awsugcbba.org`
+- **Password**: `admin123`
+
+> **Note**: Change the default password in production environments.
+
+### Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    
+    Client->>API: POST /auth/login (credentials)
+    API->>Client: JWT tokens + user info
+    Client->>API: GET /protected-endpoint (with token)
+    API->>Client: Protected resource data
+```
+
+For detailed authentication documentation, see [Authentication System Guide](./AUTHENTICATION_SYSTEM.md).
 
 ## Response Format
 
@@ -97,6 +128,83 @@ Authenticate user credentials and return JWT tokens.
 **Authentication:** Not required
 
 **Request Body:**
+```json
+{
+  "email": "admin@awsugcbba.org",
+  "password": "admin123"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "user": {
+    "id": "70657ce8-78d4-4b4f-9394-48ce2b8649bc",
+    "email": "admin@awsugcbba.org",
+    "firstName": "Admin",
+    "lastName": "User"
+  },
+  "require_password_change": false
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Missing email or password
+- `401 Unauthorized`: Invalid credentials
+- `500 Internal Server Error`: Authentication service error
+
+#### GET /auth/me
+
+Get information about the currently authenticated user.
+
+**Authentication:** Required (JWT token)
+
+**Response (200 OK):**
+```json
+{
+  "user": {
+    "id": "70657ce8-78d4-4b4f-9394-48ce2b8649bc",
+    "email": "admin@awsugcbba.org",
+    "firstName": "Admin",
+    "lastName": "User",
+    "requirePasswordChange": false,
+    "isActive": true,
+    "lastLoginAt": "2025-08-01T04:35:19.896094+00:00"
+  }
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized`: Missing, invalid, or expired token
+- `500 Internal Server Error`: Unable to retrieve user information
+
+#### POST /auth/logout
+
+Logout the current user (client-side token removal).
+
+**Authentication:** Optional (for logging purposes)
+
+**Response (200 OK):**
+```json
+{
+  "message": "Logged out successfully",
+  "timestamp": "2025-08-01T04:44:05.699170+00:00"
+}
+```
+
+### Admin Endpoints
+
+#### GET /v2/admin/test
+
+Test endpoint to verify admin system functionality and user permissions.
+
+**Authentication:** Not required (but validates admin user existence)
+
+**Response (200 OK):**
 ```json
 {
   "email": "user@example.com",

@@ -5,34 +5,50 @@ This directory contains comprehensive documentation for the registry-api reposit
 ## 📁 Documentation Structure
 
 ```
-docs/
-├── README.md                           # This file - Documentation overview
-├── workflows/
-│   ├── README.md                      # Deployment workflows overview
-│   ├── api-deployment.md              # Main API deployment pipeline
-│   ├── comprehensive-testing.md       # Testing pipeline documentation
-│   ├── rollback-procedures.md         # Emergency rollback procedures
-│   └── validation.md                  # Workflow validation guide
-├── implementation/
-│   ├── crud-operations.md             # Person CRUD implementation
-│   ├── testing-strategy.md            # Testing approach and coverage
-│   ├── security-implementation.md     # Security features and scanning
-│   └── performance-optimization.md    # Performance considerations
-├── deployment/
-│   ├── cross-repository-sync.md       # Cross-repository coordination
-│   ├── health-checks.md               # Post-deployment verification
-│   └── monitoring.md                  # Monitoring and observability
-└── templates/
-    └── pr-template.md                  # Pull request template
+api/
+├── api-docs-readme.md                  # This file - Documentation overview
+├── API_DOCUMENTATION.md               # Complete API reference
+├── AUTHENTICATION_SYSTEM.md           # 🔐 JWT authentication guide
+├── API_WORKFLOW_IMPROVEMENTS.md       # Deployment workflow improvements
+├── API_ENDPOINTS_REVIEW.md            # Endpoint analysis and review
+├── ENHANCED_SUBSCRIPTION_WORKFLOW.md  # Subscription system documentation
+└── FRONTEND_API_COMPATIBILITY_REPORT.md # Frontend integration guide
 ```
+
+### 🔐 Authentication Documentation
+
+The API now includes a complete JWT-based authentication system:
+
+- **[AUTHENTICATION_SYSTEM.md](./AUTHENTICATION_SYSTEM.md)** - Complete authentication guide
+  - Authentication endpoints (`/auth/login`, `/auth/me`, `/auth/logout`)
+  - Admin user setup and management
+  - JWT token handling and security
+  - Frontend integration examples
+  - Troubleshooting guide
+
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Updated with auth endpoints
+  - Authentication flow documentation
+  - Admin credentials and setup
+  - Protected endpoint usage
 
 ## 🎯 Quick Start
 
-1. **New to the project?** Start with [workflows/README.md](workflows/README.md)
-2. **Implementing features?** See [implementation/crud-operations.md](implementation/crud-operations.md)
-3. **Running tests?** Check [implementation/testing-strategy.md](implementation/testing-strategy.md)
-4. **Deploying changes?** See [deployment/cross-repository-sync.md](deployment/cross-repository-sync.md)
-5. **Creating a PR?** Use [templates/pr-template.md](templates/pr-template.md)
+1. **New to the project?** Start with [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
+2. **Setting up authentication?** See [AUTHENTICATION_SYSTEM.md](./AUTHENTICATION_SYSTEM.md)
+3. **Implementing features?** Check [API_ENDPOINTS_REVIEW.md](./API_ENDPOINTS_REVIEW.md)
+4. **Deploying changes?** See [API_WORKFLOW_IMPROVEMENTS.md](./API_WORKFLOW_IMPROVEMENTS.md)
+5. **Frontend integration?** Use [FRONTEND_API_COMPATIBILITY_REPORT.md](./FRONTEND_API_COMPATIBILITY_REPORT.md)
+
+### 🔐 Authentication Quick Start
+
+To get started with the authentication system:
+
+1. **Admin Login**: Use `admin@awsugcbba.org` / `admin123`
+2. **Get Token**: POST to `/auth/login` with credentials
+3. **Use Token**: Include `Authorization: Bearer <token>` in requests
+4. **Test Access**: Try `/auth/me` to verify authentication
+
+See [AUTHENTICATION_SYSTEM.md](./AUTHENTICATION_SYSTEM.md) for complete details.
 
 ## 🔗 Related Documentation
 
@@ -49,4 +65,4 @@ This documentation is maintained alongside the codebase. When making changes:
 3. Update the last modified date
 4. Test any code examples or procedures
 
-**Last Updated**: July 24, 2025
+**Last Updated**: August 1, 2025 - Added comprehensive authentication system documentation
