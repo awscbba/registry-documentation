@@ -62,17 +62,22 @@ people-registry-03/
 - CDK deployment procedures
 - Monitoring and troubleshooting
 
-### 🚀 API Documentation (`registry-api/docs/`)
+### 🚀 API Documentation (`registry-documentation/`)
 
 #### Structure
 
-- **[README.md](registry-api/docs/README.md)** - API documentation overview
-- **[workflows/README.md](registry-api/docs/workflows/README.md)** - Deployment workflows implementation
-- **[templates/pr-template.md](registry-api/docs/templates/pr-template.md)** - API PR template
+- **[api/API_DEVELOPMENT_GUIDE.md](api/API_DEVELOPMENT_GUIDE.md)** - API development best practices
+- **[troubleshooting/PRODUCTION_ISSUES_ANALYSIS.md](troubleshooting/PRODUCTION_ISSUES_ANALYSIS.md)** - Production issues analysis and fixes
+- **[troubleshooting/PRODUCTION_FIXES_APPLIED.md](troubleshooting/PRODUCTION_FIXES_APPLIED.md)** - Applied production fixes summary
+- **[troubleshooting/PRODUCTION_RISK_ANALYSIS.md](troubleshooting/PRODUCTION_RISK_ANALYSIS.md)** - Comprehensive risk analysis
+- **[templates/api-pr-template-detailed.md](templates/api-pr-template-detailed.md)** - API PR template
 
 #### Content Coverage
 
 - Person CRUD operations implementation
+- Production issue resolution and prevention
+- Async/await migration fixes
+- DynamoDB parameter handling fixes
 - Comprehensive testing strategies
 - Security scanning and validation
 - Cross-repository synchronization
