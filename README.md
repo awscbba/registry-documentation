@@ -1,45 +1,64 @@
 # People Registry Documentation
 
-This repository contains all documentation for the People Registry project, a comprehensive system for managing people, projects, and subscriptions.
+This repository contains all documentation for the People Registry project, a comprehensive system for managing people, projects, and subscriptions with Service Registry architecture.
 
 ## 📁 Documentation Structure
 
 ### 🏗️ [Architecture](./architecture/)
-System architecture, design decisions, and database schema documentation.
+System architecture, design decisions, and Service Registry implementation.
 
+- **[Service Registry Cleanup Plan](./architecture/SERVICE_REGISTRY_CLEANUP_PLAN.md)** 🎯 **NEW - Key Implementation Plan**
 - [Architecture Review and Cleanup](./architecture/ARCHITECTURE_REVIEW_AND_CLEANUP.md)
 - [Deprecated Resources Review](./architecture/ARCHITECTURE_REVIEW_AND_DEPRECATED_RESOURCES.md)
 - [Frontend Architecture Decisions](./architecture/frontend-architecture-decisions.md)
 - [Database Schema Design](./architecture/database-schema-design.md)
 
 ### 🔌 [API Documentation](./api/)
-API endpoints, workflows, and compatibility information.
+API endpoints, workflows, and Service Registry integration.
 
 - [API Documentation](./api/API_DOCUMENTATION.md)
 - [API Endpoints Review](./api/API_ENDPOINTS_REVIEW.md)
 - [API Workflow Improvements](./api/API_WORKFLOW_IMPROVEMENTS.md)
 - [Frontend API Compatibility Report](./api/FRONTEND_API_COMPATIBILITY_REPORT.md)
-- [API Documentation README](./api/api-docs-readme.md)
+- [Scripts Documentation](./api/scripts-readme.md)
 
 ### 🎨 [Frontend Documentation](./frontend/)
-Frontend-specific documentation, deployment status, and analysis.
+Frontend-specific documentation and integration with Service Registry.
 
+- [Frontend README](./frontend/README.md)
+- [Frontend Documentation](./frontend/DOCUMENTATION.md)
 - [Frontend Update Guide](./frontend/FRONTEND_UPDATE_GUIDE.md)
 - [Deployment Status](./frontend/DEPLOYMENT_STATUS.md)
 - [Static Analysis](./frontend/STATIC_ANALYSIS.md)
 - [Verification Report](./frontend/VERIFICATION_REPORT.md)
-- [Frontend Documentation README](./frontend/frontend-docs-readme.md)
 
 ### 🏗️ [Infrastructure](./infrastructure/)
-Infrastructure setup, deployment, and AWS CDK documentation.
+Infrastructure setup, deployment, and Service Registry deployment.
 
-- [API Consolidation Progress](./infrastructure/API_CONSOLIDATION_PROGRESS.md) 🎯 **Key Document**
+- **[CodeCatalyst Cleanup Strategy](./infrastructure/CODECATALYST_CLEANUP_STRATEGY.md)** 🎯 **Key Document**
+- **[Cleanup Quick Reference](./infrastructure/CLEANUP_QUICK_REFERENCE.md)** 🎯 **Key Document**
+- [API Consolidation Progress](./infrastructure/API_CONSOLIDATION_PROGRESS.md)
 - [Deployment Compatibility Summary](./infrastructure/DEPLOYMENT_COMPATIBILITY_SUMMARY.md)
 - [Deployment Coordination](./infrastructure/DEPLOYMENT_COORDINATION.md)
 - [Execution Mode Implementation](./infrastructure/EXECUTION_MODE_IMPLEMENTATION.md)
 - [Lambda Handler Updates](./infrastructure/LAMBDA_HANDLER_UPDATE.md)
 - [Performance Optimization Summary](./infrastructure/PERFORMANCE_OPTIMIZATION_SUMMARY.md)
-- [Infrastructure Documentation README](./infrastructure/infrastructure-docs-readme.md)
+
+### 🧪 [Testing Documentation](./testing/)
+Testing strategies for Service Registry architecture.
+
+- [Infrastructure Tests](./testing/infrastructure-tests.md)
+- [Infrastructure Task 18](./testing/infrastructure-task18.md)
+- [API Versioned Tests](./testing/api-versioned-tests.md)
+- [API Task 18](./testing/api-task18.md)
+
+### 🔄 [CodeCatalyst Documentation](./codecatalyst/)
+CI/CD workflows and Service Registry deployment.
+
+- [Frontend CodeCatalyst](./codecatalyst/frontend-codecatalyst.md)
+- [API CodeCatalyst](./codecatalyst/api-codecatalyst.md)
+- [Workflow Reference](./codecatalyst/workflow-reference.md)
+- [Pipeline Knowledge](./codecatalyst/pipeline-knowledge.md)
 
 ### ⚙️ [Workflows](./workflows/)
 CI/CD workflows, PR validation, and automation documentation.
@@ -79,23 +98,36 @@ Detailed summaries of completed tasks and implementations.
 ## 🎯 Key Documents
 
 ### For New Contributors
-1. **[API Consolidation Progress](./infrastructure/API_CONSOLIDATION_PROGRESS.md)** - Current project status and achievements
-2. **[Architecture Review](./architecture/ARCHITECTURE_REVIEW_AND_CLEANUP.md)** - System overview and design
-3. **[API Documentation](./api/API_DOCUMENTATION.md)** - API endpoints and usage
+1. **[Service Registry Cleanup Plan](./architecture/SERVICE_REGISTRY_CLEANUP_PLAN.md)** 🆕 - **CRITICAL: Complete refactoring roadmap**
+2. **[API Consolidation Progress](./infrastructure/API_CONSOLIDATION_PROGRESS.md)** - Current project status and achievements
+3. **[Architecture Review](./architecture/ARCHITECTURE_REVIEW_AND_CLEANUP.md)** - System overview and design
+4. **[API Documentation](./api/API_DOCUMENTATION.md)** - API endpoints and usage
 
 ### For Developers
-1. **[Frontend Update Guide](./frontend/FRONTEND_UPDATE_GUIDE.md)** - Frontend development guide
-2. **[API Workflow Improvements](./api/API_WORKFLOW_IMPROVEMENTS.md)** - API development best practices
-3. **[PR Templates](./templates/)** - Standardized PR templates
+1. **[Service Registry Cleanup Plan](./architecture/SERVICE_REGISTRY_CLEANUP_PLAN.md)** 🆕 - **Implementation guide**
+2. **[Frontend Update Guide](./frontend/FRONTEND_UPDATE_GUIDE.md)** - Frontend development guide
+3. **[API Workflow Improvements](./api/API_WORKFLOW_IMPROVEMENTS.md)** - API development best practices
+4. **[PR Templates](./templates/)** - Standardized PR templates
 
 ### For DevOps/Infrastructure
-1. **[Infrastructure Documentation](./infrastructure/)** - Complete infrastructure setup
-2. **[Deployment Compatibility](./infrastructure/DEPLOYMENT_COMPATIBILITY_SUMMARY.md)** - Deployment guidelines
-3. **[Performance Optimization](./infrastructure/PERFORMANCE_OPTIMIZATION_SUMMARY.md)** - Performance best practices
+1. **[CodeCatalyst Cleanup Strategy](./infrastructure/CODECATALYST_CLEANUP_STRATEGY.md)** 🆕 - **Infrastructure cleanup**
+2. **[Infrastructure Documentation](./infrastructure/)** - Complete infrastructure setup
+3. **[Deployment Compatibility](./infrastructure/DEPLOYMENT_COMPATIBILITY_SUMMARY.md)** - Deployment guidelines
+4. **[Performance Optimization](./infrastructure/PERFORMANCE_OPTIMIZATION_SUMMARY.md)** - Performance best practices
 
 ## 🚀 Project Status
 
-**Current Status**: ✅ **Container-based serverless architecture successfully implemented**
+**Current Status**: 🔄 **Implementing Service Registry Pattern**
+
+### Current Phase: Service Registry Implementation
+- ✅ **Phase 1**: Core Service Registry Infrastructure (IN PROGRESS)
+  - ✅ Base service interfaces created
+  - ✅ Service registry container implemented
+  - ✅ Unified configuration management
+  - 🔄 Domain services implementation
+- 🔄 **Phase 2**: Service Consolidation (NEXT)
+- 🔄 **Phase 3**: Data Access Layer (PLANNED)
+- 🔄 **Phase 4**: API Layer Cleanup (PLANNED)
 
 ### Recent Achievements
 - ✅ Complete container migration for all Lambda functions
@@ -103,6 +135,13 @@ Detailed summaries of completed tasks and implementations.
 - ✅ Routing infrastructure working perfectly
 - ✅ Modern serverless architecture with Docker containers
 - ✅ Centralized documentation repository established
+- ✅ **Service Registry architecture planning completed**
+- ✅ **Documentation consolidation completed**
+
+### Architecture Migration
+- **From**: Multiple duplicate handlers, inconsistent patterns
+- **To**: Service Registry pattern with dependency injection
+- **Benefits**: 50% code reduction, consistent patterns, easy testing
 
 ## 📚 Documentation Maintenance
 
@@ -111,7 +150,15 @@ This repository maintains synchronized copies of documentation from across the p
 - **Single Source of Truth**: All project documentation centralized here
 - **Logical Organization**: Documents organized by domain and purpose
 - **Role-Based Access**: Quick navigation for different team roles
+- **Service Registry Focus**: Architecture documentation prioritized
 - **Maintenance Guidelines**: See [MAINTENANCE.md](./MAINTENANCE.md) for standards
+
+## 🔗 Repository Links
+
+- **API**: `registry-api/` - FastAPI backend with Service Registry pattern
+- **Frontend**: `registry-frontend/` - Astro frontend application  
+- **Infrastructure**: `registry-infrastructure/` - AWS CDK infrastructure
+- **Documentation**: `registry-documentation/` - This repository (centralized docs)
 
 ## 📞 Support
 
@@ -119,6 +166,6 @@ For questions about this documentation or the People Registry project, please re
 
 ---
 
-**Last Updated**: July 28, 2025  
-**Documentation Version**: 2.0  
+**Last Updated**: August 11, 2025  
+**Documentation Version**: 3.0 - Service Registry Edition  
 **Project**: People Registry - AWS User Group Cochabamba
