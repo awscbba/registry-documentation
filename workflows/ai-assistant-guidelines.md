@@ -19,6 +19,10 @@
 4. **Always confirm before pushing any code**
 5. **Always follow the established naming conventions**
 
+### Implementation Principles:
+6. **Check for existing implementations first** - Before implementing any feature, search the codebase to identify if similar functionality already exists. Integrate with or enhance existing systems rather than creating duplicates.
+7. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
+
 ## Branch Naming Convention
 
 ```
@@ -126,12 +130,25 @@ Alternatives: [other options considered]
 ## Code Review Requirements
 
 ### Before Any Code Changes:
-1. Show the diff of what will be changed
-2. Explain the purpose and impact
-3. Identify any potential risks
-4. Wait for explicit approval
-5. Use proper commit messages
-6. **Verify correct directory placement**
+1. **Search for existing implementations** - Use `grep`, `find`, or IDE search to check if similar functionality exists
+2. Show the diff of what will be changed
+3. Explain the purpose and impact
+4. Identify any potential risks
+5. Wait for explicit approval
+6. Use proper commit messages
+7. **Verify correct directory placement**
+8. **Consider test coverage** - Identify what tests are needed and whether to write tests first
+
+### Implementation Strategy:
+```
+🔍 IMPLEMENTATION CHECKLIST:
+- Search: [describe search performed for existing implementations]
+- Integration: [how this integrates with existing systems]
+- Tests: [what tests will be created/updated]
+- Duplication: [confirmation no duplicate functionality is being created]
+
+Proceed? (explicit yes required)
+```
 
 ### Commit Message Format:
 ```
