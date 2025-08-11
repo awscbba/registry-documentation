@@ -110,9 +110,10 @@ Alternatives: [other options considered]
    - Include clear documentation in script headers
 
 3. **Documentation**: ALL documentation must be generated in the `registry-documentation/` repository
-   - Architecture docs, API docs, deployment guides
+   - Architecture docs, API docs, deployment guides, cleanup strategies
    - Never create documentation in other repositories
    - Use proper markdown formatting and organization
+   - **CENTRALIZED DOCUMENTATION PRINCIPLE**: All project documentation, including cleanup strategies, migration guides, and architectural decisions, must be stored in the registry-documentation repository to maintain a single source of truth
 
 ### File Placement Rules:
 ```
