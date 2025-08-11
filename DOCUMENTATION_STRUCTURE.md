@@ -13,6 +13,29 @@ people-registry-03/
 │   ├── PRE_PR_CHECKLIST.md               # Pre-PR validation checklist
 │   └── PR_DEPLOYMENT_SUMMARY.md          # Complete deployment summary
 │
+├── registry-documentation/                 # Centralized documentation repository
+│   ├── security/                          # Security documentation
+│   │   ├── README.md                      # Security docs overview
+│   │   ├── ROLE_BASED_ACCESS_CONTROL.md   # RBAC system documentation
+│   │   ├── RBAC_MIGRATION_GUIDE.md        # Migration guide for RBAC
+│   │   ├── SECURITY_BEST_PRACTICES.md     # Security guidelines (planned)
+│   │   └── DATA_PROTECTION.md             # Data protection guide (planned)
+│   ├── fixes/                             # Fix documentation and analysis
+│   │   ├── RBAC_CASE_SENSITIVITY_FIX.md   # RBAC case sensitivity fix (2025-08-11)
+│   │   ├── RBAC_INFRASTRUCTURE_PERMISSIONS_FIX.md # RBAC infrastructure permissions fix (2025-08-11)
+│   │   ├── FRONTEND_FIX.md                # Frontend fixes documentation
+│   │   ├── FRONTEND_QUICK_FIXES.md        # Quick frontend fixes
+│   │   └── PERSON_UPDATE_FIX.md           # Person update fixes
+│   ├── api/                               # API documentation
+│   │   ├── AUTHENTICATION_SYSTEM.md       # JWT authentication system
+│   │   ├── API_DEVELOPMENT_GUIDE.md       # API development best practices
+│   │   └── [other API docs...]            # Existing API documentation
+│   ├── infrastructure/                    # Infrastructure documentation
+│   ├── frontend/                          # Frontend documentation
+│   ├── testing/                           # Testing documentation
+│   ├── troubleshooting/                   # Troubleshooting guides
+│   └── workflows/                         # Workflow documentation
+│
 ├── registry-infrastructure/
 │   └── docs/                              # Infrastructure documentation
 │       ├── README.md                      # Infrastructure docs overview
@@ -62,11 +85,34 @@ people-registry-03/
 - CDK deployment procedures
 - Monitoring and troubleshooting
 
+### 🔒 Security Documentation (`registry-documentation/security/`)
+
+#### Structure
+
+- **[README.md](security/README.md)** - Security documentation overview
+- **[ROLE_BASED_ACCESS_CONTROL.md](security/ROLE_BASED_ACCESS_CONTROL.md)** - Database-driven RBAC system
+- **[RBAC_MIGRATION_GUIDE.md](security/RBAC_MIGRATION_GUIDE.md)** - Migration from hardcoded to database-driven roles
+- **[SECURITY_BEST_PRACTICES.md](security/SECURITY_BEST_PRACTICES.md)** - Security guidelines (planned)
+- **[DATA_PROTECTION.md](security/DATA_PROTECTION.md)** - Data protection and privacy (planned)
+
+#### Content Coverage
+
+- Role-based access control implementation
+- Database-driven permission system
+- Security migration procedures
+- Authentication and authorization
+- Audit trail and compliance
+- Security best practices and guidelines
+
 ### 🚀 API Documentation (`registry-documentation/`)
 
 #### Structure
 
 - **[api/API_DEVELOPMENT_GUIDE.md](api/API_DEVELOPMENT_GUIDE.md)** - API development best practices
+- **[fixes/RBAC_CASE_SENSITIVITY_FIX.md](fixes/RBAC_CASE_SENSITIVITY_FIX.md)** - RBAC case sensitivity fix documentation (2025-08-11)
+- **[fixes/RBAC_INFRASTRUCTURE_PERMISSIONS_FIX.md](fixes/RBAC_INFRASTRUCTURE_PERMISSIONS_FIX.md)** - RBAC infrastructure permissions fix (2025-08-11)
+- **[troubleshooting/ADMIN_ACCESS_TROUBLESHOOTING.md](troubleshooting/ADMIN_ACCESS_TROUBLESHOOTING.md)** - Admin access troubleshooting guide
+- **[implementation-summaries/RBAC_CASE_SENSITIVITY_IMPLEMENTATION.md](implementation-summaries/RBAC_CASE_SENSITIVITY_IMPLEMENTATION.md)** - RBAC fix implementation summary
 - **[troubleshooting/PRODUCTION_ISSUES_ANALYSIS.md](troubleshooting/PRODUCTION_ISSUES_ANALYSIS.md)** - Production issues analysis and fixes
 - **[troubleshooting/PRODUCTION_FIXES_APPLIED.md](troubleshooting/PRODUCTION_FIXES_APPLIED.md)** - Applied production fixes summary
 - **[troubleshooting/PRODUCTION_RISK_ANALYSIS.md](troubleshooting/PRODUCTION_RISK_ANALYSIS.md)** - Comprehensive risk analysis
@@ -108,9 +154,10 @@ people-registry-03/
 
 ### Repository-Specific Documentation
 
-1. **Infrastructure**: [registry-infrastructure/docs/README.md](registry-infrastructure/docs/README.md)
-2. **API**: [registry-api/docs/README.md](registry-api/docs/README.md)
-3. **Frontend**: [registry-frontend/docs/README.md](registry-frontend/docs/README.md)
+1. **Security**: [registry-documentation/security/README.md](security/README.md)
+2. **API**: [registry-documentation/api/](api/)
+3. **Infrastructure**: [registry-infrastructure/docs/README.md](registry-infrastructure/docs/README.md)
+4. **Frontend**: [registry-frontend/docs/README.md](registry-frontend/docs/README.md)
 
 ### PR Templates
 
