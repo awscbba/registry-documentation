@@ -9,6 +9,7 @@ api/
 ├── api-docs-readme.md                  # This file - Documentation overview
 ├── API_DOCUMENTATION.md               # Complete API reference
 ├── AUTHENTICATION_SYSTEM.md           # 🔐 JWT authentication guide
+├── ENHANCED_ADMIN_FEATURES.md         # 👑 Enhanced admin functionality
 ├── API_WORKFLOW_IMPROVEMENTS.md       # Deployment workflow improvements
 ├── API_ENDPOINTS_REVIEW.md            # Endpoint analysis and review
 ├── ENHANCED_SUBSCRIPTION_WORKFLOW.md  # Subscription system documentation
@@ -28,6 +29,19 @@ The API now includes a complete JWT-based authentication system:
 
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Updated with auth endpoints
   - Authentication flow documentation
+
+### 👑 Enhanced Admin Features
+
+The API now includes comprehensive admin functionality:
+
+- **[ENHANCED_ADMIN_FEATURES.md](./ENHANCED_ADMIN_FEATURES.md)** - Complete admin features guide
+  - Enhanced dashboard with user statistics (totalUsers, activeUsers)
+  - User management endpoints for editing profiles and account status
+  - Project management CRUD operations
+  - Bulk user operations for super admins
+  - Analytics dashboard with trends and insights
+  - Admin action logging and audit trail
+  - Role-based access control and security features
   - Admin credentials and setup
   - Protected endpoint usage
 
