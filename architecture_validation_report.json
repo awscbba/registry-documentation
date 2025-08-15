@@ -1,0 +1,108 @@
+{
+  "timestamp": "2025-08-12T02:07:27.518755",
+  "duration_seconds": 0.000661,
+  "validation_summary": {
+    "total": 7,
+    "successful": 0,
+    "failed": 7,
+    "success_rate": "0.0%"
+  },
+  "validations": [
+    {
+      "component": "Repository Layer",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "Missing files: ['src/repositories/user_repository.py', 'src/repositories/project_repository.py', 'src/repositories/audit_repository.py']",
+      "metrics": {}
+    },
+    {
+      "component": "Service Layer",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "Missing files: ['src/services/people_service.py', 'src/services/projects_service.py', 'src/services/audit_service.py', 'src/services/service_registry_manager.py']",
+      "metrics": {}
+    },
+    {
+      "component": "API Layer",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "Missing files: ['src/api/monitoring_api_handler.py', 'src/handlers/versioned_api_handler.py', 'src/handlers/repository_api_handler.py']",
+      "metrics": {}
+    },
+    {
+      "component": "Monitoring Implementation",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "ServiceRegistryManager not found",
+      "metrics": {}
+    },
+    {
+      "component": "Integration Patterns",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "Successful integrations: 0/3",
+      "metrics": {
+        "successful_integrations": 0,
+        "total_integrations": 3
+      }
+    },
+    {
+      "component": "Test Coverage",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "Test files: 0, Test methods: 0, Validation scripts: 0",
+      "metrics": {
+        "test_files": 0,
+        "test_methods": 0,
+        "validation_scripts": 0
+      }
+    },
+    {
+      "component": "Architecture Completeness",
+      "status": "\u274c INVALID",
+      "success": false,
+      "details": "File completeness: 0.0%, Patterns: 0/5",
+      "metrics": {
+        "file_completeness": "0.0%",
+        "architectural_patterns": "0/5",
+        "component_status": {
+          "Repository Layer": {
+            "found": 0,
+            "total": 3,
+            "complete": false
+          },
+          "Service Layer": {
+            "found": 0,
+            "total": 4,
+            "complete": false
+          },
+          "API Layer": {
+            "found": 0,
+            "total": 2,
+            "complete": false
+          },
+          "Monitoring": {
+            "found": 0,
+            "total": 1,
+            "complete": false
+          },
+          "Tests": {
+            "found": 0,
+            "total": 1,
+            "complete": false
+          }
+        }
+      }
+    }
+  ],
+  "architecture_status": "NEEDS_ATTENTION",
+  "recommendations": [
+    "Fix Repository Layer: Missing files: ['src/repositories/user_repository.py', 'src/repositories/project_repository.py', 'src/repositories/audit_repository.py']",
+    "Fix Service Layer: Missing files: ['src/services/people_service.py', 'src/services/projects_service.py', 'src/services/audit_service.py', 'src/services/service_registry_manager.py']",
+    "Fix API Layer: Missing files: ['src/api/monitoring_api_handler.py', 'src/handlers/versioned_api_handler.py', 'src/handlers/repository_api_handler.py']",
+    "Fix Monitoring Implementation: ServiceRegistryManager not found",
+    "Fix Integration Patterns: Successful integrations: 0/3",
+    "Fix Test Coverage: Test files: 0, Test methods: 0, Validation scripts: 0",
+    "Fix Architecture Completeness: File completeness: 0.0%, Patterns: 0/5"
+  ]
+}
