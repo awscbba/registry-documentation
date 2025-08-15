@@ -9,6 +9,7 @@
 4. **NEVER modify CI/CD pipeline configurations**
 5. **NEVER delete branches without confirmation**
 6. **NEVER force push (git push --force)**
+7. **NEVER touch the root folder** - Do not create, update, or modify any files or directories in the project root. Only work within repository directories: `registry-api/`, `registry-frontend/`, `registry-infrastructure/`, `registry-documentation/`
 
 ## ✅ ALWAYS DO THESE ACTIONS
 
@@ -98,13 +99,22 @@ Alternatives: [other options considered]
 
 ## File Organization Principles
 
+### 🚫 CRITICAL RULE - ROOT FOLDER RESTRICTION:
+**NEVER touch the root folder** - Do not create, update, or modify any files or directories in the project root directory. Only work within the specific repository directories:
+- ✅ `registry-api/` - API backend code, tests, and scripts
+- ✅ `registry-frontend/` - Frontend code, tests, and scripts  
+- ✅ `registry-infrastructure/` - Infrastructure code, tests, and scripts
+- ✅ `registry-documentation/` - All project documentation
+
+**Root folder is OFF-LIMITS** - This maintains clean separation between repositories and prevents organizational issues.
+
 ### Strict Directory Structure:
-1. **Tests**: ALL test files must be created in the `tests/` directory
+1. **Tests**: ALL test files must be created in the `tests/` directory **within each repository**
    - Unit tests, integration tests, end-to-end tests
    - Follow naming convention: `test_*.py`
    - Organize by feature/module when needed
 
-2. **Scripts**: ALL utility scripts must be created in the `scripts/` directory
+2. **Scripts**: ALL utility scripts must be created in the `scripts/` directory **within each repository**
    - Deployment scripts, debugging tools, maintenance scripts
    - Make scripts executable with proper shebang
    - Include clear documentation in script headers
@@ -118,15 +128,28 @@ Alternatives: [other options considered]
 ### File Placement Rules:
 ```
 ✅ CORRECT:
-- tests/test_authentication.py
-- scripts/diagnose_production.py  
+- registry-api/tests/test_authentication.py
+- registry-api/scripts/diagnose_production.py  
+- registry-infrastructure/scripts/deploy_infrastructure.py
+- registry-frontend/tests/test_components.py
 - registry-documentation/api-guide.md
 
 ❌ INCORRECT:
 - test_authentication.py (root level)
-- diagnose_production.py (root level)
+- scripts/diagnose_production.py (root level)
+- tests/test_authentication.py (root level)
 - README_detailed.md (in api/infrastructure repos)
+- any_file.py (root level)
+- any_directory/ (root level)
 ```
+
+### Repository-Specific Guidelines:
+- **registry-api/**: Backend API code, tests, scripts, and configurations
+- **registry-frontend/**: Frontend code, tests, scripts, and configurations  
+- **registry-infrastructure/**: Infrastructure as Code, deployment scripts, configurations
+- **registry-documentation/**: All project documentation, guides, and architectural decisions
+
+**Remember**: The root directory should only contain repository directories and essential project files (like devbox.json, .gitignore). Never add new files or directories to the root level.
 
 ## Code Review Requirements
 
