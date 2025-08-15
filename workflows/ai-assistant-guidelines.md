@@ -196,4 +196,119 @@ type(scope): description
 - Resource creation/deletion
 - Cost threshold breaches
 
+## Lambda Functions and Container Deployment
+
+### 🐳 CRITICAL DEPLOYMENT INFORMATION
+
+#### Lambda Function Architecture:
+- **Deployment Method**: Container-based Lambda functions (NOT zip files)
+- **Container Definitions**: Located in `registry-api/` repository
+- **Base Images**: Python runtime containers with dependencies
+- **Build Process**: Automated through CDK infrastructure deployment
+
+#### Lambda Function Structure:
+```
+registry-api/
+├── Dockerfile                    # Container definition for Lambda
+├── main.py                      # Primary Lambda entry point
+├── router_main.py               # Router Lambda entry point  
+├── main_versioned.py            # Versioned API entry point
+├── src/                         # Application source code
+│   ├── handlers/                # API route handlers
+│   ├── services/                # Business logic services
+│   ├── models/                  # Data models
+│   └── utils/                   # Utility functions
+└── requirements.txt             # Python dependencies
+```
+
+#### Current Lambda Functions:
+1. **PeopleRegisterInfrastruct-PeopleApiFunction67A8223-xlC79QhrsKBe**
+   - Main API function handling all endpoints
+   - Container-based deployment
+   - Entry point: `main.py` → `modular_api_handler.py`
+
+2. **PeopleRegisterInfrastructureS-AuthFunctionA1CD5E0F-lujBJmLNxohb**
+   - Authentication-specific function
+   - Container-based deployment
+   - Entry point: Authentication handlers
+
+3. **PeopleRegisterInfrastructur-RouterFunction6AC6EF3B-cFuTZOTV5Cjd**
+   - Request routing function
+   - Container-based deployment
+   - Entry point: `router_main.py`
+
+#### Deployment Process:
+```bash
+# Code changes in registry-api/ trigger container rebuild
+cd registry-infrastructure/
+source .venv/bin/activate
+npx cdk deploy --hotswap-fallback  # Fast Lambda updates
+# OR
+npx cdk deploy                     # Full stack deployment
+```
+
+#### Container Build Process:
+1. **Code Changes**: Made in `registry-api/` repository
+2. **Container Build**: CDK automatically builds new container image
+3. **Lambda Update**: New container deployed to Lambda functions
+4. **API Gateway**: Routes traffic to updated Lambda functions
+
+#### 🚨 DEPLOYMENT CRITICAL NOTES:
+
+##### Code Update Workflow:
+1. **Make changes** in `registry-api/` repository
+2. **Commit and push** changes to feature branch
+3. **Deploy infrastructure** from `registry-infrastructure/` to update Lambda
+4. **Container rebuild** happens automatically during CDK deployment
+5. **Lambda functions** get updated with new container image
+
+##### Deployment Dependencies:
+- **Source Code**: `registry-api/` repository
+- **Infrastructure**: `registry-infrastructure/` repository  
+- **CDK Deployment**: Required to update Lambda functions
+- **Container Registry**: ECR automatically managed by CDK
+
+##### Common Issues:
+- **Code changes not reflected**: Need to run CDK deploy to rebuild containers
+- **Lambda function not updating**: Check CDK deployment status
+- **Container build failures**: Check Dockerfile and dependencies
+- **Permission issues**: Verify IAM roles and policies
+
+#### Environment Variables:
+Lambda functions use environment variables for configuration:
+```
+PEOPLE_TABLE_NAME=PeopleTable
+AUDIT_LOGS_TABLE_NAME=AuditLogsTable
+FRONTEND_URL=https://d28z2il3z2vmpc.cloudfront.net
+SES_FROM_EMAIL=noreply@cbba.cloud.org.bo
+JWT_SECRET=your-jwt-secret-change-in-production-please
+```
+
+#### Monitoring and Debugging:
+- **CloudWatch Logs**: Each Lambda function has dedicated log groups
+- **X-Ray Tracing**: Enabled for performance monitoring
+- **Health Endpoints**: `/health` for function status checks
+- **Error Handling**: Comprehensive error logging and reporting
+
+#### 🔧 TROUBLESHOOTING LAMBDA DEPLOYMENTS:
+
+##### If Lambda Functions Not Updating:
+1. Check CDK deployment status in CloudFormation
+2. Verify container build completed successfully
+3. Check Lambda function "Last Modified" timestamp
+4. Review CloudWatch logs for deployment errors
+5. Ensure correct branch is being deployed
+
+##### Container Build Issues:
+1. Verify Dockerfile syntax and dependencies
+2. Check requirements.txt for version conflicts
+3. Ensure all source files are included in container
+4. Review CDK logs for build failures
+
+##### Performance Issues:
+1. Monitor Lambda function duration and memory usage
+2. Check for cold start impacts
+3. Review database connection pooling
+4. Analyze X-Ray traces for bottlenecks
+
 This document should be referenced before ANY repository operation.
