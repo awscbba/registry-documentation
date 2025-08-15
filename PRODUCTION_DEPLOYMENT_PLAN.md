@@ -14,20 +14,38 @@ Deploying the complete People Registry API with all implemented phases:
 - **Security**: Authentication, authorization, audit logging
 - **Performance**: Multi-level caching, adaptive throttling
 
-## 🏗️ AWS Infrastructure Architecture
+## 🏗️ AWS Infrastructure Architecture (Serverless)
 
-### **Compute Layer**
+### **Frontend Layer**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Application Load Balancer                │
-│                  (SSL Termination + WAF)                   │
+│                      CloudFront CDN                        │
+│              (Global Edge Locations + Caching)             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │   Edge-1    │  │   Edge-2    │  │   Edge-N    │        │
+│  │  (US-East)  │  │  (EU-West)  │  │  (AP-South) │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘        │
 └─────────────────────┬───────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
-│                  ECS Fargate Cluster                       │
+│                      S3 Bucket                             │
+│              (Static Frontend Assets)                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### **API Layer**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    API Gateway                             │
+│              (REST API + Authentication)                   │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────┐
+│                  Lambda Functions                          │
+│              (Container-based Serverless)                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│  │   API-1     │  │   API-2     │  │   API-3     │        │
-│  │ (Primary)   │  │ (Secondary) │  │ (Tertiary)  │        │
+│  │   API       │  │    Auth     │  │   Router    │        │
+│  │ Function    │  │  Function   │  │  Function   │        │
 │  └─────────────┘  └─────────────┘  └─────────────┘        │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -35,20 +53,24 @@ Deploying the complete People Registry API with all implemented phases:
 ### **Data Layer**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     Amazon RDS Aurora                      │
-│              (PostgreSQL Compatible)                       │
-│  ┌─────────────┐              ┌─────────────┐             │
-│  │   Writer    │◄────────────►│   Reader    │             │
-│  │  Instance   │              │  Instance   │             │
-│  └─────────────┘              └─────────────┘             │
-└─────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────▼───────────────────────────────┐
-│                  Amazon ElastiCache                        │
-│                    (Redis Cluster)                         │
+│                     DynamoDB Tables                        │
+│              (NoSQL with Auto-Scaling)                     │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│  │   Cache-1   │  │   Cache-2   │  │   Cache-3   │        │
+│  │   People    │  │  Projects   │  │Subscriptions│        │
+│  │   Table     │  │   Table     │  │   Table     │        │
 │  └─────────────┘  └─────────────┘  └─────────────┘        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │ AuditLogs   │  │ RateLimit   │  │PasswordReset│        │
+│  │   Table     │  │   Table     │  │   Table     │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### **Communication Layer**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 Simple Email Service (SES)                 │
+│              (Email Notifications + DKIM)                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -56,12 +78,12 @@ Deploying the complete People Registry API with all implemented phases:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    CloudWatch Metrics                      │
-│              (Custom Metrics + Dashboards)                 │
+│         (Lambda, API Gateway, DynamoDB Metrics)            │
 └─────────────────────┬───────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
 │                  CloudWatch Logs                           │
-│              (Centralized Logging)                         │
+│              (Lambda Function Logs)                        │
 └─────────────────────┬───────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
@@ -70,29 +92,31 @@ Deploying the complete People Registry API with all implemented phases:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Deployment Strategy
+## 🚀 Deployment Strategy (Serverless CDK)
 
 ### **Phase 1: Infrastructure Setup**
-1. **VPC and Networking**
-2. **RDS Aurora Setup**
-3. **ElastiCache Redis Cluster**
-4. **ECS Fargate Cluster**
-5. **Application Load Balancer**
-6. **CloudWatch Setup**
+1. **CDK Bootstrap**: Initialize CDK in target AWS account
+2. **DynamoDB Tables**: Create all required NoSQL tables
+3. **Lambda Functions**: Deploy container-based functions
+4. **API Gateway**: Set up REST API with endpoints
+5. **CloudFront**: Configure CDN for frontend distribution
+6. **SES**: Configure email service for notifications
+7. **CloudWatch**: Set up monitoring and logging
 
 ### **Phase 2: Application Deployment**
-1. **Container Image Build**
-2. **ECS Service Deployment**
-3. **Database Migration**
-4. **Cache Warming**
-5. **Health Check Validation**
+1. **Container Build**: Build Lambda container images
+2. **Function Deployment**: Deploy Lambda functions via CDK
+3. **API Configuration**: Configure API Gateway routes
+4. **Frontend Deployment**: Deploy static assets to S3/CloudFront
+5. **Environment Variables**: Configure Lambda environment
+6. **Health Check Validation**: Verify all endpoints
 
 ### **Phase 3: Production Validation**
-1. **Smoke Tests**
-2. **Load Testing**
-3. **Security Validation**
-4. **Performance Benchmarking**
-5. **Monitoring Validation**
+1. **Smoke Tests**: Test all critical endpoints
+2. **Load Testing**: Validate serverless auto-scaling
+3. **Security Validation**: Test authentication and authorization
+4. **Performance Benchmarking**: Measure Lambda cold/warm starts
+5. **Monitoring Validation**: Verify CloudWatch metrics and logs
 
 ## 📋 Pre-Deployment Checklist
 
@@ -106,11 +130,13 @@ Deploying the complete People Registry API with all implemented phases:
 
 ### ✅ **Infrastructure Readiness**
 - [ ] AWS Account and permissions configured
-- [ ] VPC and subnets created
-- [ ] Security groups configured
-- [ ] RDS Aurora cluster provisioned
-- [ ] ElastiCache Redis cluster provisioned
-- [ ] ECS cluster and task definitions ready
+- [ ] CDK CLI installed and bootstrapped
+- [ ] ECR repositories for Lambda containers
+- [ ] DynamoDB table schemas defined
+- [ ] Lambda function configurations ready
+- [ ] API Gateway endpoint definitions
+- [ ] CloudFront distribution configuration
+- [ ] SES domain verification completed
 
 ### ✅ **Monitoring Readiness**
 - [x] CloudWatch metrics configured
@@ -127,44 +153,45 @@ Deploying the complete People Registry API with all implemented phases:
 - [x] Input validation and sanitization
 - [x] HTTPS/TLS configuration ready
 
-## 🛠️ Infrastructure as Code
+## 🛠️ Infrastructure as Code (CDK)
 
-### **AWS CDK Stack Structure**
+### **CDK Stack Structure**
 ```
-people-registry-production/
-├── lib/
-│   ├── network-stack.ts          # VPC, Subnets, Security Groups
-│   ├── database-stack.ts         # RDS Aurora, ElastiCache
-│   ├── compute-stack.ts          # ECS Fargate, ALB
-│   ├── monitoring-stack.ts       # CloudWatch, X-Ray
-│   └── security-stack.ts         # IAM, Secrets Manager
-├── bin/
-│   └── people-registry-app.ts    # Main CDK app
-└── cdk.json                      # CDK configuration
+registry-infrastructure/
+├── people_register_infrastructure/
+│   ├── people_register_infrastructure_stack.py  # Main CDK stack
+│   ├── lambda_functions.py                      # Lambda function definitions
+│   ├── dynamodb_tables.py                       # DynamoDB table definitions
+│   ├── api_gateway.py                           # API Gateway configuration
+│   └── cloudfront.py                            # CloudFront distribution
+├── app.py                                       # CDK app entry point
+├── cdk.json                                     # CDK configuration
+└── requirements.txt                             # Python dependencies
 ```
 
 ### **Environment Configuration**
 ```yaml
 # Production Environment
 production:
-  region: us-west-2
-  availability_zones: 3
+  region: us-east-1
   
-  # Compute
-  ecs_cluster_name: people-registry-prod
-  task_cpu: 1024
-  task_memory: 2048
-  desired_count: 3
-  max_capacity: 10
+  # Lambda Functions
+  lambda_memory: 512
+  lambda_timeout: 30
+  lambda_runtime: python3.11
   
-  # Database
-  aurora_instance_class: db.r6g.large
-  aurora_instances: 2
-  backup_retention: 30
+  # DynamoDB
+  billing_mode: PAY_PER_REQUEST
+  point_in_time_recovery: true
+  deletion_protection: true
   
-  # Cache
-  redis_node_type: cache.r6g.large
-  redis_num_nodes: 3
+  # API Gateway
+  throttle_rate_limit: 1000
+  throttle_burst_limit: 2000
+  
+  # CloudFront
+  price_class: PriceClass_100
+  cache_behavior: CachingOptimized
   
   # Monitoring
   log_retention_days: 30
