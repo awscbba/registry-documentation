@@ -198,26 +198,31 @@ type(scope): description
 
 ## Lambda Functions and Container Deployment
 
-### 🐳 CRITICAL DEPLOYMENT INFORMATION
+### 🐳 CRITICAL DEPLOYMENT INFORMATION - UPDATED AUGUST 16, 2025
 
 #### Lambda Function Architecture:
 - **Deployment Method**: Container-based Lambda functions (NOT zip files)
 - **Container Definitions**: Located in `registry-api/` repository
 - **Base Images**: Python runtime containers with dependencies
 - **Build Process**: Automated through CDK infrastructure deployment
+- **🚨 CURRENT ARCHITECTURE**: **SERVICE REGISTRY PATTERN DEPLOYED** ✅
 
-#### Lambda Function Structure:
+#### Lambda Function Structure - SERVICE REGISTRY (CURRENT):
 ```
 registry-api/
-├── Dockerfile                    # Container definition for Lambda
-├── main.py                      # Primary Lambda entry point
-├── router_main.py               # Router Lambda entry point  
-├── main_versioned.py            # Versioned API entry point
-├── src/                         # Application source code
-│   ├── handlers/                # API route handlers
-│   ├── services/                # Business logic services
-│   ├── models/                  # Data models
-│   └── utils/                   # Utility functions
+├── Dockerfile.lambda               # Container definition for Lambda
+├── main.py                        # ✅ PRIMARY Lambda entry point (SERVICE REGISTRY)
+├── main_versioned.py              # ❌ LEGACY - No longer used in production
+├── router_main.py                 # Router Lambda entry point  
+├── src/
+│   ├── handlers/
+│   │   ├── modular_api_handler.py # ✅ ACTIVE - Service Registry (366 lines)
+│   │   └── versioned_api_handler.py # ❌ LEGACY - Monolithic (2,797 lines)
+│   ├── services/                  # 15 Service Registry services
+│   ├── models/                    # Data models
+│   └── utils/                     # Utility functions
+└── requirements.txt               # Python dependencies
+```
 └── requirements.txt             # Python dependencies
 ```
 
