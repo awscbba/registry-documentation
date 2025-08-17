@@ -198,13 +198,31 @@ type(scope): description
 
 ## Lambda Functions and Container Deployment
 
-### 🐳 CRITICAL DEPLOYMENT INFORMATION - UPDATED AUGUST 16, 2025
+### 🐳 CRITICAL DEPLOYMENT ARCHITECTURE - UPDATED AUGUST 17, 2025
+
+#### 🚨 DUAL PIPELINE ARCHITECTURE - CRITICAL UNDERSTANDING:
+
+The project uses **TWO SEPARATE DEPLOYMENT PIPELINES** with distinct responsibilities:
+
+##### 1. **REGISTRY-INFRASTRUCTURE PIPELINE** (Infrastructure Provisioning):
+- **Location**: `registry-infrastructure/` repository
+- **Purpose**: Provisions AWS resources (DynamoDB, API Gateway, Lambda functions, IAM roles, etc.)
+- **Technology**: AWS CDK (Python)
+- **Workflow**: `.codecatalyst/workflows/infrastructure-deployment-main.yml`
+- **Triggers**: Main branch pushes to `registry-infrastructure/`
+- **Deploys**: AWS infrastructure resources with placeholder Lambda code
+
+##### 2. **REGISTRY-API PIPELINE** (Application Deployment):
+- **Location**: `registry-api/` repository  
+- **Purpose**: Builds and deploys Lambda container images with Service Registry application
+- **Technology**: Docker containers deployed to Lambda via ECR
+- **Triggers**: Main branch pushes to `registry-api/`
+- **Deploys**: Application code, Service Registry services, health check fixes
 
 #### Lambda Function Architecture:
 - **Deployment Method**: Container-based Lambda functions (NOT zip files)
 - **Container Definitions**: Located in `registry-api/` repository
 - **Base Images**: Python runtime containers with dependencies
-- **Build Process**: Automated through CDK infrastructure deployment
 - **🚨 CURRENT ARCHITECTURE**: **SERVICE REGISTRY PATTERN DEPLOYED** ✅
 
 #### Lambda Function Structure - SERVICE REGISTRY (CURRENT):
@@ -223,8 +241,6 @@ registry-api/
 │   └── utils/                     # Utility functions
 └── requirements.txt               # Python dependencies
 ```
-└── requirements.txt             # Python dependencies
-```
 
 #### Current Lambda Functions:
 1. **PeopleRegisterInfrastruct-PeopleApiFunction67A8223-xlC79QhrsKBe**
@@ -242,42 +258,63 @@ registry-api/
    - Container-based deployment
    - Entry point: `router_main.py`
 
-#### Deployment Process:
+#### 🚨 DEPLOYMENT CRITICAL NOTES - DUAL PIPELINE SYSTEM:
+
+##### Infrastructure Changes (registry-infrastructure/):
 ```bash
-# Code changes in registry-api/ trigger container rebuild
+# For AWS resource changes (DynamoDB, API Gateway, IAM, etc.)
 cd registry-infrastructure/
 source .venv/bin/activate
-npx cdk deploy --hotswap-fallback  # Fast Lambda updates
-# OR
-npx cdk deploy                     # Full stack deployment
+npx cdk deploy --hotswap-fallback  # Infrastructure updates
 ```
 
-#### Container Build Process:
-1. **Code Changes**: Made in `registry-api/` repository
-2. **Container Build**: CDK automatically builds new container image
-3. **Lambda Update**: New container deployed to Lambda functions
-4. **API Gateway**: Routes traffic to updated Lambda functions
+##### Application Code Changes (registry-api/):
+```bash
+# For Service Registry code, health checks, business logic
+# Changes in registry-api/ trigger SEPARATE pipeline
+# Container rebuild and Lambda update handled by registry-api pipeline
+# NO manual deployment needed from registry-infrastructure/
+```
 
-#### 🚨 DEPLOYMENT CRITICAL NOTES:
+##### 🔄 DEPLOYMENT WORKFLOW SEPARATION:
 
-##### Code Update Workflow:
-1. **Make changes** in `registry-api/` repository
-2. **Commit and push** changes to feature branch
-3. **Deploy infrastructure** from `registry-infrastructure/` to update Lambda
-4. **Container rebuild** happens automatically during CDK deployment
-5. **Lambda functions** get updated with new container image
+**Infrastructure Pipeline** (registry-infrastructure):
+1. **Provisions**: AWS resources, Lambda functions (with placeholder code)
+2. **Creates**: DynamoDB tables, API Gateway, CloudFront, IAM roles
+3. **Sets up**: Container-based Lambda functions ready for application deployment
+4. **Triggers**: Changes to infrastructure code, CDK configurations
+
+**API Pipeline** (registry-api):
+1. **Builds**: Docker containers with Service Registry application
+2. **Pushes**: Container images to Amazon ECR
+3. **Updates**: Lambda functions with new application container images
+4. **Deploys**: Health check fixes, service improvements, business logic changes
+5. **Triggers**: Changes to application code, Service Registry services
 
 ##### Deployment Dependencies:
-- **Source Code**: `registry-api/` repository
-- **Infrastructure**: `registry-infrastructure/` repository  
-- **CDK Deployment**: Required to update Lambda functions
-- **Container Registry**: ECR automatically managed by CDK
+- **Infrastructure First**: `registry-infrastructure/` must deploy AWS resources
+- **Application Second**: `registry-api/` deploys application code to existing infrastructure
+- **Independent Updates**: Application can deploy without infrastructure changes
+- **Container Registry**: ECR managed by infrastructure, used by API pipeline
 
-##### Common Issues:
-- **Code changes not reflected**: Need to run CDK deploy to rebuild containers
-- **Lambda function not updating**: Check CDK deployment status
-- **Container build failures**: Check Dockerfile and dependencies
-- **Permission issues**: Verify IAM roles and policies
+##### 🚨 COMMON DEPLOYMENT CONFUSION:
+
+**❌ INCORRECT ASSUMPTION**: 
+"Code changes in registry-api/ require CDK deployment from registry-infrastructure/"
+
+**✅ CORRECT UNDERSTANDING**:
+"Code changes in registry-api/ are deployed by the SEPARATE registry-api pipeline"
+
+**❌ INCORRECT WORKFLOW**:
+1. Change code in registry-api/
+2. Run CDK deploy from registry-infrastructure/
+3. Expect application updates
+
+**✅ CORRECT WORKFLOW**:
+1. Change code in registry-api/
+2. Push to registry-api repository
+3. Registry-api pipeline automatically builds and deploys containers
+4. Lambda functions updated with new application code
 
 #### Environment Variables:
 Lambda functions use environment variables for configuration:
@@ -297,23 +334,30 @@ JWT_SECRET=your-jwt-secret-change-in-production-please
 
 #### 🔧 TROUBLESHOOTING LAMBDA DEPLOYMENTS:
 
-##### If Lambda Functions Not Updating:
+##### Infrastructure Issues (registry-infrastructure):
 1. Check CDK deployment status in CloudFormation
+2. Verify AWS resources are provisioned correctly
+3. Check IAM roles and permissions
+4. Review infrastructure CloudWatch logs
+
+##### Application Issues (registry-api):
+1. Check registry-api pipeline status
 2. Verify container build completed successfully
 3. Check Lambda function "Last Modified" timestamp
-4. Review CloudWatch logs for deployment errors
-5. Ensure correct branch is being deployed
+4. Review application CloudWatch logs for runtime errors
+5. Verify health check endpoints are responding
 
 ##### Container Build Issues:
-1. Verify Dockerfile syntax and dependencies
+1. Verify Dockerfile syntax and dependencies in registry-api/
 2. Check requirements.txt for version conflicts
 3. Ensure all source files are included in container
-4. Review CDK logs for build failures
+4. Review registry-api pipeline logs for build failures
 
 ##### Performance Issues:
 1. Monitor Lambda function duration and memory usage
 2. Check for cold start impacts
 3. Review database connection pooling
 4. Analyze X-Ray traces for bottlenecks
+5. Check Service Registry health check performance
 
 This document should be referenced before ANY repository operation.
