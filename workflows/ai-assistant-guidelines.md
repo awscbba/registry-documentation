@@ -19,10 +19,56 @@
 3. **Always explain what changes will be made**
 4. **Always confirm before pushing any code**
 5. **Always follow the established naming conventions**
+6. **Always use uv for Python package management** - NEVER use pip, venv, or direct python commands
 
 ### Implementation Principles:
-6. **Check for existing implementations first** - Before implementing any feature, search the codebase to identify if similar functionality already exists. Integrate with or enhance existing systems rather than creating duplicates.
-7. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
+7. **Check for existing implementations first** - Before implementing any feature, search the codebase to identify if similar functionality already exists. Integrate with or enhance existing systems rather than creating duplicates.
+8. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
+
+## Python Development Requirements
+
+### **CRITICAL: This project uses `uv` for Python package management**
+
+#### **Required Commands**:
+- **Install dependencies**: `uv sync`
+- **Run Python commands**: `uv run <command>`
+- **Run tests**: `uv run pytest tests/ -v`
+- **Add packages**: `uv add <package>`
+- **Remove packages**: `uv remove <package>`
+- **Run specific test file**: `uv run pytest tests/test_file.py -v`
+- **Run Python scripts**: `uv run python script.py`
+
+#### **❌ NEVER Use**:
+- `pip install`
+- `python -m venv`
+- `source .venv/bin/activate`
+- Direct `python` or `pytest` commands without `uv run`
+- `pip freeze > requirements.txt`
+
+#### **✅ ALWAYS Use**:
+- `uv sync` (to install dependencies)
+- `uv run python` (to run Python)
+- `uv run pytest` (to run tests)
+- `uv add package-name` (to add dependencies)
+
+### **Development Workflow**:
+```bash
+# Setup (first time)
+cd registry-api/
+uv sync
+
+# Run tests
+uv run pytest tests/ -v
+
+# Run specific tests
+uv run pytest tests/test_project_repository_field_mapping.py -v
+
+# Add new dependency
+uv add new-package
+
+# Run the application
+uv run python main.py
+```
 
 ## Branch Naming Convention
 
