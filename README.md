@@ -2,6 +2,15 @@
 
 This repository contains all documentation for the People Registry project, a comprehensive system for managing people, projects, and subscriptions with Service Registry architecture.
 
+## 📁 **Documentation Organization - Updated August 21, 2025**
+
+Documentation is now organized into specialized directories:
+- **`standards/`** - Coding standards, architectural patterns, and compliance requirements
+- **`planning/`** - Migration strategies, deployment plans, and future roadmaps  
+- **`fixes/`** - Issue resolution, production fixes, and debugging methodologies
+
+See [Documentation Organization](./standards/DOCUMENTATION_ORGANIZATION.md) for complete structure details.
+
 ## 🎉 **LATEST UPDATE - August 14, 2025**
 
 ### ✅ **Frontend Performance Optimization Phase 1 - COMPLETED & READY**

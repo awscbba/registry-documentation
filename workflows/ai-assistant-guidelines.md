@@ -3,6 +3,7 @@
 ## 🚫 NEVER DO THESE ACTIONS
 
 ### Absolutely Forbidden:
+
 1. **NEVER push directly to main branch**
 2. **NEVER merge to main without explicit permission**
 3. **NEVER create production deployments**
@@ -14,6 +15,7 @@
 ## ✅ ALWAYS DO THESE ACTIONS
 
 ### Required Workflow:
+
 1. **Always work on feature branches**
 2. **Always ask before creating new branches**
 3. **Always explain what changes will be made**
@@ -22,6 +24,7 @@
 6. **Always use uv for Python package management** - NEVER use pip, venv, or direct python commands
 
 ### Implementation Principles:
+
 7. **Check for existing implementations first** - Before implementing any feature, search the codebase to identify if similar functionality already exists. Integrate with or enhance existing systems rather than creating duplicates.
 8. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
 
@@ -30,6 +33,7 @@
 ### **CRITICAL: This project uses `uv` for Python package management**
 
 #### **Required Commands**:
+
 - **Install dependencies**: `uv sync`
 - **Run Python commands**: `uv run <command>`
 - **Run tests**: `uv run pytest tests/ -v`
@@ -39,6 +43,7 @@
 - **Run Python scripts**: `uv run python script.py`
 
 #### **❌ NEVER Use**:
+
 - `pip install`
 - `python -m venv`
 - `source .venv/bin/activate`
@@ -46,12 +51,14 @@
 - `pip freeze > requirements.txt`
 
 #### **✅ ALWAYS Use**:
+
 - `uv sync` (to install dependencies)
 - `uv run python` (to run Python)
 - `uv run pytest` (to run tests)
 - `uv add package-name` (to add dependencies)
 
 ### **Development Workflow**:
+
 ```bash
 # Setup (first time)
 cd registry-api/
@@ -83,6 +90,7 @@ refactor/code-improvement
 ## Required Confirmation Process
 
 ### Before Any Git Operation:
+
 ```
 🔍 CONFIRMATION REQUIRED:
 - Action: [describe what will be done]
@@ -94,6 +102,7 @@ Proceed? (explicit yes required)
 ```
 
 ### Before Any AWS Operations:
+
 ```
 🔍 AWS OPERATION CONFIRMATION:
 - Service: [AWS service being modified]
@@ -108,6 +117,7 @@ Proceed? (explicit yes required)
 ## Emergency Procedures
 
 ### If Mistake is Made:
+
 1. **STOP immediately**
 2. **Assess the damage**
 3. **Document what happened**
@@ -116,6 +126,7 @@ Proceed? (explicit yes required)
 6. **Report to user immediately**
 
 ### Rollback Commands:
+
 ```bash
 # If pushed to main accidentally
 git revert <commit-hash>
@@ -132,6 +143,7 @@ git reset --hard HEAD~1
 ## Communication Protocol
 
 ### Always Use This Format:
+
 ```
 🎯 PROPOSED ACTION:
 What: [clear description]
@@ -146,21 +158,26 @@ Alternatives: [other options considered]
 ## File Organization Principles
 
 ### 🚫 CRITICAL RULE - ROOT FOLDER RESTRICTION:
+
 **NEVER touch the root folder** - Do not create, update, or modify any files or directories in the project root directory. Only work within the specific repository directories:
+
 - ✅ `registry-api/` - API backend code, tests, and scripts
-- ✅ `registry-frontend/` - Frontend code, tests, and scripts  
+- ✅ `registry-frontend/` - Frontend code, tests, and scripts
 - ✅ `registry-infrastructure/` - Infrastructure code, tests, and scripts
 - ✅ `registry-documentation/` - All project documentation
 
 **Root folder is OFF-LIMITS** - This maintains clean separation between repositories and prevents organizational issues.
 
 ### Strict Directory Structure:
+
 1. **Tests**: ALL test files must be created in the `tests/` directory **within each repository**
+
    - Unit tests, integration tests, end-to-end tests
    - Follow naming convention: `test_*.py`
    - Organize by feature/module when needed
 
 2. **Scripts**: ALL utility scripts must be created in the `scripts/` directory **within each repository**
+
    - Deployment scripts, debugging tools, maintenance scripts
    - Make scripts executable with proper shebang
    - Include clear documentation in script headers
@@ -172,10 +189,11 @@ Alternatives: [other options considered]
    - **CENTRALIZED DOCUMENTATION PRINCIPLE**: All project documentation, including cleanup strategies, migration guides, and architectural decisions, must be stored in the registry-documentation repository to maintain a single source of truth
 
 ### File Placement Rules:
+
 ```
 ✅ CORRECT:
 - registry-api/tests/test_authentication.py
-- registry-api/scripts/diagnose_production.py  
+- registry-api/scripts/diagnose_production.py
 - registry-infrastructure/scripts/deploy_infrastructure.py
 - registry-frontend/tests/test_components.py
 - registry-documentation/api-guide.md
@@ -190,8 +208,9 @@ Alternatives: [other options considered]
 ```
 
 ### Repository-Specific Guidelines:
+
 - **registry-api/**: Backend API code, tests, scripts, and configurations
-- **registry-frontend/**: Frontend code, tests, scripts, and configurations  
+- **registry-frontend/**: Frontend code, tests, scripts, and configurations
 - **registry-infrastructure/**: Infrastructure as Code, deployment scripts, configurations
 - **registry-documentation/**: All project documentation, guides, and architectural decisions
 
@@ -200,6 +219,7 @@ Alternatives: [other options considered]
 ## Code Review Requirements
 
 ### Before Any Code Changes:
+
 1. **Search for existing implementations** - Use `grep`, `find`, or IDE search to check if similar functionality exists
 2. Show the diff of what will be changed
 3. Explain the purpose and impact
@@ -210,6 +230,7 @@ Alternatives: [other options considered]
 8. **Consider test coverage** - Identify what tests are needed and whether to write tests first
 
 ### Implementation Strategy:
+
 ```
 🔍 IMPLEMENTATION CHECKLIST:
 - Search: [describe search performed for existing implementations]
@@ -221,6 +242,7 @@ Proceed? (explicit yes required)
 ```
 
 ### Commit Message Format:
+
 ```
 type(scope): description
 
@@ -236,6 +258,7 @@ type(scope): description
 ## Monitoring and Alerts
 
 ### Set Up Alerts For:
+
 - Direct pushes to main
 - Failed CI/CD pipelines
 - Unauthorized deployments
@@ -251,6 +274,7 @@ type(scope): description
 The project uses **TWO SEPARATE DEPLOYMENT PIPELINES** with distinct responsibilities:
 
 ##### 1. **REGISTRY-INFRASTRUCTURE PIPELINE** (Infrastructure Provisioning):
+
 - **Location**: `registry-infrastructure/` repository
 - **Purpose**: Provisions AWS resources (DynamoDB, API Gateway, Lambda functions, IAM roles, etc.)
 - **Technology**: AWS CDK (Python)
@@ -259,25 +283,28 @@ The project uses **TWO SEPARATE DEPLOYMENT PIPELINES** with distinct responsibil
 - **Deploys**: AWS infrastructure resources with placeholder Lambda code
 
 ##### 2. **REGISTRY-API PIPELINE** (Application Deployment):
-- **Location**: `registry-api/` repository  
+
+- **Location**: `registry-api/` repository
 - **Purpose**: Builds and deploys Lambda container images with Service Registry application
 - **Technology**: Docker containers deployed to Lambda via ECR
 - **Triggers**: Main branch pushes to `registry-api/`
 - **Deploys**: Application code, Service Registry services, health check fixes
 
 #### Lambda Function Architecture:
+
 - **Deployment Method**: Container-based Lambda functions (NOT zip files)
 - **Container Definitions**: Located in `registry-api/` repository
 - **Base Images**: Python runtime containers with dependencies
 - **🚨 CURRENT ARCHITECTURE**: **SERVICE REGISTRY PATTERN DEPLOYED** ✅
 
 #### Lambda Function Structure - SERVICE REGISTRY (CURRENT):
+
 ```
 registry-api/
 ├── Dockerfile.lambda               # Container definition for Lambda
 ├── main.py                        # ✅ PRIMARY Lambda entry point (SERVICE REGISTRY)
 ├── main_versioned.py              # ❌ LEGACY - No longer used in production
-├── router_main.py                 # Router Lambda entry point  
+├── router_main.py                 # Router Lambda entry point
 ├── src/
 │   ├── handlers/
 │   │   ├── modular_api_handler.py # ✅ ACTIVE - Service Registry (366 lines)
@@ -289,12 +316,15 @@ registry-api/
 ```
 
 #### Current Lambda Functions:
+
 1. **PeopleRegisterInfrastruct-PeopleApiFunction67A8223-xlC79QhrsKBe**
+
    - Main API function handling all endpoints
    - Container-based deployment
    - Entry point: `main.py` → `modular_api_handler.py`
 
 2. **PeopleRegisterInfrastructureS-AuthFunctionA1CD5E0F-lujBJmLNxohb**
+
    - Authentication-specific function
    - Container-based deployment
    - Entry point: Authentication handlers
@@ -307,6 +337,7 @@ registry-api/
 #### 🚨 DEPLOYMENT CRITICAL NOTES - DUAL PIPELINE SYSTEM:
 
 ##### Infrastructure Changes (registry-infrastructure/):
+
 ```bash
 # For AWS resource changes (DynamoDB, API Gateway, IAM, etc.)
 cd registry-infrastructure/
@@ -315,6 +346,7 @@ npx cdk deploy --hotswap-fallback  # Infrastructure updates
 ```
 
 ##### Application Code Changes (registry-api/):
+
 ```bash
 # For Service Registry code, health checks, business logic
 # Changes in registry-api/ trigger SEPARATE pipeline
@@ -325,12 +357,14 @@ npx cdk deploy --hotswap-fallback  # Infrastructure updates
 ##### 🔄 DEPLOYMENT WORKFLOW SEPARATION:
 
 **Infrastructure Pipeline** (registry-infrastructure):
+
 1. **Provisions**: AWS resources, Lambda functions (with placeholder code)
 2. **Creates**: DynamoDB tables, API Gateway, CloudFront, IAM roles
 3. **Sets up**: Container-based Lambda functions ready for application deployment
 4. **Triggers**: Changes to infrastructure code, CDK configurations
 
 **API Pipeline** (registry-api):
+
 1. **Builds**: Docker containers with Service Registry application
 2. **Pushes**: Container images to Amazon ECR
 3. **Updates**: Lambda functions with new application container images
@@ -338,6 +372,7 @@ npx cdk deploy --hotswap-fallback  # Infrastructure updates
 5. **Triggers**: Changes to application code, Service Registry services
 
 ##### Deployment Dependencies:
+
 - **Infrastructure First**: `registry-infrastructure/` must deploy AWS resources
 - **Application Second**: `registry-api/` deploys application code to existing infrastructure
 - **Independent Updates**: Application can deploy without infrastructure changes
@@ -345,25 +380,29 @@ npx cdk deploy --hotswap-fallback  # Infrastructure updates
 
 ##### 🚨 COMMON DEPLOYMENT CONFUSION:
 
-**❌ INCORRECT ASSUMPTION**: 
+**❌ INCORRECT ASSUMPTION**:
 "Code changes in registry-api/ require CDK deployment from registry-infrastructure/"
 
 **✅ CORRECT UNDERSTANDING**:
 "Code changes in registry-api/ are deployed by the SEPARATE registry-api pipeline"
 
 **❌ INCORRECT WORKFLOW**:
+
 1. Change code in registry-api/
 2. Run CDK deploy from registry-infrastructure/
 3. Expect application updates
 
 **✅ CORRECT WORKFLOW**:
+
 1. Change code in registry-api/
 2. Push to registry-api repository
 3. Registry-api pipeline automatically builds and deploys containers
 4. Lambda functions updated with new application code
 
 #### Environment Variables:
+
 Lambda functions use environment variables for configuration:
+
 ```
 PEOPLE_TABLE_NAME=PeopleTable
 AUDIT_LOGS_TABLE_NAME=AuditLogsTable
@@ -373,6 +412,7 @@ JWT_SECRET=your-jwt-secret-change-in-production-please
 ```
 
 #### Monitoring and Debugging:
+
 - **CloudWatch Logs**: Each Lambda function has dedicated log groups
 - **X-Ray Tracing**: Enabled for performance monitoring
 - **Health Endpoints**: `/health` for function status checks
@@ -381,12 +421,14 @@ JWT_SECRET=your-jwt-secret-change-in-production-please
 #### 🔧 TROUBLESHOOTING LAMBDA DEPLOYMENTS:
 
 ##### Infrastructure Issues (registry-infrastructure):
+
 1. Check CDK deployment status in CloudFormation
 2. Verify AWS resources are provisioned correctly
 3. Check IAM roles and permissions
 4. Review infrastructure CloudWatch logs
 
 ##### Application Issues (registry-api):
+
 1. Check registry-api pipeline status
 2. Verify container build completed successfully
 3. Check Lambda function "Last Modified" timestamp
@@ -394,12 +436,14 @@ JWT_SECRET=your-jwt-secret-change-in-production-please
 5. Verify health check endpoints are responding
 
 ##### Container Build Issues:
+
 1. Verify Dockerfile syntax and dependencies in registry-api/
 2. Check requirements.txt for version conflicts
 3. Ensure all source files are included in container
 4. Review registry-api pipeline logs for build failures
 
 ##### Performance Issues:
+
 1. Monitor Lambda function duration and memory usage
 2. Check for cold start impacts
 3. Review database connection pooling
