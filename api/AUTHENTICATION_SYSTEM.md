@@ -291,7 +291,7 @@ if (response.status === 401) {
 ### Environment Variables
 
 **JWT Configuration:**
-- `JWT_SECRET_KEY`: Secret key for JWT signing (default: auto-generated)
+- `JWT_SECRET`: Secret key for JWT signing (default: your-jwt-secret-change-in-production-please)
 - `JWT_EXPIRATION_HOURS`: Access token expiration (default: 1 hour)
 
 **Admin Configuration:**

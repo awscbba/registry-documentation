@@ -297,6 +297,30 @@ The project uses **TWO SEPARATE DEPLOYMENT PIPELINES** with distinct responsibil
 - **Base Images**: Python runtime containers with dependencies
 - **🚨 CURRENT ARCHITECTURE**: **SERVICE REGISTRY PATTERN DEPLOYED** ✅
 
+### 🏗️ ARCHITECTURAL PATTERNS - MANDATORY ENFORCEMENT:
+
+#### **SERVICE REGISTRY PATTERN** (Required for all implementations):
+- **All business logic** must be implemented as services in `src/services/`
+- **Service Discovery**: Services are registered and managed through the service registry
+- **Dependency Injection**: Services are injected into handlers and other services
+- **Single Responsibility**: Each service handles one specific domain (people, projects, subscriptions, etc.)
+- **Interface Consistency**: All services follow the same interface patterns
+
+#### **REPOSITORY PATTERN** (Required for all data access):
+- **All database operations** must go through repository classes
+- **Data Access Layer**: Repositories abstract database implementation details
+- **Consistent Interface**: All repositories follow the same CRUD interface patterns
+- **Testability**: Repositories can be easily mocked for testing
+- **Location**: Repository classes in `src/repositories/` or within service modules
+
+#### **ENFORCEMENT RULES**:
+- ❌ **NEVER** write direct database calls in handlers or controllers
+- ❌ **NEVER** implement business logic directly in API handlers
+- ✅ **ALWAYS** use services for business logic
+- ✅ **ALWAYS** use repositories for data access
+- ✅ **ALWAYS** follow the established service and repository interfaces
+- ✅ **ALWAYS** register new services in the service registry
+
 #### Lambda Function Structure - SERVICE REGISTRY (CURRENT):
 
 ```
