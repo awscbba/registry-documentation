@@ -1,328 +1,400 @@
-# Development Code Conventions Standard
+# Coding Conventions - People Registry Project
 
 ## Overview
+This document establishes coding standards and conventions for the People Registry project to ensure consistency, maintainability, and code quality across all components.
 
-This document establishes consistent coding conventions across the People Registry project to ensure maintainability, readability, and prevent integration issues between frontend and backend systems.
+## General Principles
 
-## Field Naming Conventions
+### Code Quality
+- **Readability First**: Code should be self-documenting and easy to understand
+- **Consistency**: Follow established patterns within the codebase
+- **Simplicity**: Prefer simple, clear solutions over complex ones
+- **DRY Principle**: Don't Repeat Yourself - extract common functionality
+- **SOLID Principles**: Follow SOLID design principles for maintainable code
 
-### **STANDARD: Use camelCase for all API responses and frontend code**
+### Architecture Patterns
+- **Clean Architecture**: Separate concerns with clear boundaries
+- **Service Layer Pattern**: Business logic in dedicated service classes
+- **Repository Pattern**: Data access abstraction
+- **Dependency Injection**: Use dependency injection for testability
 
-#### ✅ Correct (camelCase):
-```javascript
-{
-  "id": "123",
-  "firstName": "John",
-  "lastName": "Doe", 
-  "createdAt": "2024-08-26T10:00:00Z",
-  "updatedAt": "2024-08-26T10:00:00Z",
-  "projectId": "456",
-  "personId": "789",
-  "startDate": "2024-01-01",
-  "endDate": "2024-12-31"
-}
-```
+## Python Conventions (Registry API)
 
-#### ❌ Incorrect (snake_case):
-```javascript
-{
-  "id": "123",
-  "first_name": "John",        // Should be firstName
-  "last_name": "Doe",          // Should be lastName
-  "created_at": "2024...",     // Should be createdAt
-  "updated_at": "2024...",     // Should be updatedAt
-  "project_id": "456",         // Should be projectId
-  "person_id": "789"           // Should be personId
-}
-```
+### Code Formatting
+- **Black**: Use Black formatter with default settings (88 character line length)
+- **Import Organization**: Use isort for consistent import ordering
+- **Linting**: Use Flake8 for code quality checks
 
-### Backend Implementation
-
-#### Python/FastAPI (Backend):
+### Naming Conventions
 ```python
-# Use Pydantic models with alias_generator for automatic conversion
-from pydantic import BaseModel, Field
-from pydantic.alias_generators import to_camel
+# Classes: PascalCase
+class UserService:
+    pass
 
-class PersonResponse(BaseModel):
-    model_config = ConfigDict(alias_generator=to_camel)
-    
-    id: str
-    first_name: str  # Internal: snake_case
-    last_name: str   # Internal: snake_case
-    created_at: datetime  # Internal: snake_case
-    # API returns: {"firstName": "...", "lastName": "...", "createdAt": "..."}
+# Functions/Methods: snake_case
+def get_user_by_id(user_id: str) -> User:
+    pass
+
+# Variables: snake_case
+user_count = 10
+is_active = True
+
+# Constants: UPPER_SNAKE_CASE
+MAX_RETRY_ATTEMPTS = 3
+DEFAULT_TIMEOUT = 30
+
+# Private methods: leading underscore
+def _validate_input(self, data: dict) -> bool:
+    pass
 ```
 
-#### TypeScript (Frontend):
+### Type Hints
+- **Always use type hints** for function parameters and return values
+- **Use Union types** for optional parameters
+- **Import types** from `typing` module when needed
+
+```python
+from typing import Optional, List, Dict, Union
+from datetime import datetime
+
+def create_user(
+    name: str, 
+    email: str, 
+    age: Optional[int] = None
+) -> Dict[str, Union[str, int]]:
+    pass
+```
+
+### Error Handling
+- **Custom Exceptions**: Use domain-specific exception classes
+- **Structured Logging**: Use structured JSON logging with correlation IDs
+- **User-Safe Messages**: Never expose internal details in error responses
+
+```python
+class ServiceRegistryError(Exception):
+    def __init__(self, message: str, user_message: str = None, error_code: str = None):
+        super().__init__(message)
+        self.user_message = user_message or "An internal error occurred"
+        self.error_code = error_code
+
+# Usage
+try:
+    result = risky_operation()
+except Exception as e:
+    logger.error(f"Operation failed: {str(e)}", extra={"correlation_id": request_id})
+    raise ServiceRegistryError(
+        message=f"Database operation failed: {str(e)}",
+        user_message="Unable to process request at this time",
+        error_code="DB_ERROR"
+    )
+```
+
+### Documentation
+- **Docstrings**: Use Google-style docstrings for all public functions/classes
+- **Inline Comments**: Explain complex business logic, not obvious code
+- **README Files**: Each component should have comprehensive README
+
+```python
+def calculate_user_score(user_data: Dict[str, Any], weights: Dict[str, float]) -> float:
+    """Calculate a weighted score for a user based on various metrics.
+    
+    Args:
+        user_data: Dictionary containing user metrics and attributes
+        weights: Dictionary mapping metric names to their weights
+        
+    Returns:
+        Calculated weighted score as a float between 0.0 and 100.0
+        
+    Raises:
+        ValidationError: If required metrics are missing from user_data
+        ValueError: If weights don't sum to 1.0
+    """
+    pass
+```
+
+## TypeScript/JavaScript Conventions (Frontend)
+
+### Code Formatting
+- **Prettier**: Use Prettier with 2-space indentation
+- **ESLint**: Use ESLint with TypeScript rules
+- **Semicolons**: Always use semicolons
+
+### Naming Conventions
 ```typescript
-// All interfaces use camelCase
-interface Person {
+// Interfaces: PascalCase with 'I' prefix
+interface IUser {
   id: string;
-  firstName: string;    // Matches API response
-  lastName: string;     // Matches API response
-  createdAt: string;    // Matches API response
-  updatedAt: string;    // Matches API response
+  name: string;
+}
+
+// Types: PascalCase
+type UserRole = 'admin' | 'user' | 'viewer';
+
+// Functions: camelCase
+const getUserById = (id: string): Promise<IUser> => {
+  // implementation
+};
+
+// Components: PascalCase
+const UserProfile: React.FC<IUserProfileProps> = ({ user }) => {
+  return <div>{user.name}</div>;
+};
+
+// Constants: UPPER_SNAKE_CASE
+const API_BASE_URL = 'https://api.example.com';
+const MAX_RETRY_COUNT = 3;
+```
+
+### React Conventions
+- **Functional Components**: Prefer functional components with hooks
+- **Props Interface**: Always define props interface for components
+- **Custom Hooks**: Extract reusable logic into custom hooks
+- **Error Boundaries**: Implement error boundaries for robust UX
+
+```typescript
+interface IUserProfileProps {
+  user: IUser;
+  onEdit?: (user: IUser) => void;
+}
+
+const UserProfile: React.FC<IUserProfileProps> = ({ user, onEdit }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+    onEdit?.(user);
+  }, [user, onEdit]);
+  
+  return (
+    <div className="user-profile">
+      <h2>{user.name}</h2>
+      <button onClick={handleEdit}>Edit</button>
+    </div>
+  );
+};
+```
+
+## Infrastructure as Code (CDK/CloudFormation)
+
+### Naming Conventions
+- **Resources**: Use descriptive, hierarchical names
+- **Stacks**: Include environment and purpose in stack names
+- **Tags**: Consistent tagging strategy for all resources
+
+```typescript
+// CDK Construct naming
+const userTable = new dynamodb.Table(this, 'UserTable', {
+  tableName: `${props.environment}-people-registry-users`,
+  // configuration
+});
+
+// Stack naming
+class PeopleRegistryApiStack extends Stack {
+  constructor(scope: Construct, id: string, props: IPeopleRegistryApiStackProps) {
+    super(scope, `${props.environment}-people-registry-api`, props);
+  }
 }
 ```
 
 ## Database Conventions
 
-### **STANDARD: Use snake_case for database columns**
+### Table Naming
+- **Snake Case**: Use snake_case for table and column names
+- **Descriptive**: Use clear, descriptive names
+- **Prefixes**: Consider prefixes for related tables
 
 ```sql
--- Database schema uses snake_case (PostgreSQL/DynamoDB standard)
-CREATE TABLE people (
-    id UUID PRIMARY KEY,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
+-- Table names
+users
+user_profiles
+user_sessions
+admin_audit_logs
+
+-- Column names
+user_id
+created_at
+updated_at
+is_active
 ```
 
-### **Conversion Layer Responsibility:**
+### Indexes
+- **Naming**: Include table name and indexed columns
+- **Performance**: Index frequently queried columns
+- **Composite**: Use composite indexes for multi-column queries
 
-- **Database → Backend**: ORM handles snake_case to camelCase conversion
-- **Backend → API**: Pydantic models with `alias_generator=to_camel`
-- **API → Frontend**: Direct consumption (no transformation needed)
+## Git Conventions
 
-## File and Directory Naming
-
-### Frontend (TypeScript/React):
-```
-✅ Correct:
-- components/PersonForm.tsx
-- services/projectApi.ts
-- utils/fieldMapping.ts
-- types/person.ts
-
-❌ Incorrect:
-- components/person_form.tsx
-- services/project_api.ts
-- utils/field_mapping.ts
-```
-
-### Backend (Python):
-```
-✅ Correct:
-- services/person_service.py
-- repositories/project_repository.py
-- models/subscription_model.py
-- utils/field_mapper.py
-
-❌ Incorrect:
-- services/PersonService.py
-- repositories/ProjectRepository.py
-```
-
-### Infrastructure (CDK/CloudFormation):
-```
-✅ Correct:
-- PeopleApiFunction
-- ProjectSubscriptionTable
-- AdminDashboardStack
-
-❌ Incorrect:
-- people_api_function
-- project-subscription-table
-```
-
-## API Endpoint Conventions
-
-### **STANDARD: Use kebab-case for URLs, camelCase for JSON**
+### Commit Messages
+Follow Conventional Commits specification:
 
 ```
-✅ Correct:
-GET /api/v2/people
-GET /api/v2/project-subscriptions
-POST /api/v2/admin/user-management
+<type>[optional scope]: <description>
 
-Response body (camelCase):
-{
-  "success": true,
-  "data": {
-    "firstName": "John",
-    "projectId": "123"
-  }
-}
+[optional body]
 
-❌ Incorrect:
-GET /api/v2/people_management
-GET /api/v2/projectSubscriptions
-Response with snake_case fields
+[optional footer(s)]
 ```
 
-## Variable and Function Naming
+**Types**:
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
 
-### TypeScript/JavaScript:
-```typescript
-✅ Correct:
-const getUserSubscriptions = async (personId: string) => { ... }
-const projectSubscriptionManager = new ProjectSubscriptionManager();
-const isActiveSubscription = subscription.status === 'active';
-
-❌ Incorrect:
-const get_user_subscriptions = async (person_id: string) => { ... }
-const project_subscription_manager = new ProjectSubscriptionManager();
+**Examples**:
+```
+feat(auth): add JWT token validation middleware
+fix(api): resolve psutil dependency issue in Docker container
+docs(readme): update installation instructions
+refactor(services): extract common validation logic
 ```
 
-### Python:
-```python
-✅ Correct:
-def get_user_subscriptions(person_id: str) -> List[Subscription]:
-    pass
-
-class ProjectSubscriptionService:
-    def create_subscription(self, project_id: str, person_id: str):
-        pass
-
-❌ Incorrect:
-def getUserSubscriptions(personId: str) -> List[Subscription]:
-    pass
+### Branch Naming
+```
+<type>/<short-description>
+feature/user-authentication
+hotfix/critical-router-implementation
+bugfix/admin-panel-loading
+docs/api-documentation-update
 ```
 
-## Error Handling Conventions
+## Testing Conventions
 
-### API Error Responses (camelCase):
-```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid input data",
-    "details": {
-      "fieldErrors": {
-        "firstName": "First name is required",
-        "projectId": "Invalid project ID format"
-      }
-    }
-  }
-}
-```
-
-## Logging Conventions
-
-### Structured Logging (camelCase for consistency):
-```typescript
-// Frontend
-logger.info('User subscription created', {
-  personId: '123',
-  projectId: '456',
-  subscriptionId: '789',
-  eventType: 'subscription_created'
-});
-```
+### Test Organization
+- **File Naming**: `test_<module_name>.py` or `<module_name>.test.ts`
+- **Test Classes**: Group related tests in classes
+- **Descriptive Names**: Test names should describe the scenario
 
 ```python
-# Backend
+class TestUserService:
+    def test_create_user_with_valid_data_returns_user_id(self):
+        # Arrange
+        user_data = {"name": "John Doe", "email": "john@example.com"}
+        
+        # Act
+        result = user_service.create_user(user_data)
+        
+        # Assert
+        assert result["user_id"] is not None
+        assert result["status"] == "created"
+```
+
+### Test Structure
+- **AAA Pattern**: Arrange, Act, Assert
+- **Mocking**: Mock external dependencies
+- **Test Data**: Use factories or fixtures for test data
+
+## Documentation Standards
+
+### README Structure
+Each component should have:
+1. **Purpose**: What the component does
+2. **Installation**: How to set up locally
+3. **Usage**: Basic usage examples
+4. **API Documentation**: For services
+5. **Contributing**: How to contribute
+6. **Testing**: How to run tests
+
+### API Documentation
+- **OpenAPI/Swagger**: Document all API endpoints
+- **Examples**: Include request/response examples
+- **Error Codes**: Document all possible error responses
+
+## Security Guidelines
+
+### Sensitive Data
+- **No Hardcoded Secrets**: Use environment variables or secret management
+- **Input Validation**: Validate all user inputs
+- **SQL Injection**: Use parameterized queries
+- **XSS Prevention**: Sanitize user-generated content
+
+### Authentication & Authorization
+- **JWT Tokens**: Use secure JWT implementation
+- **Role-Based Access**: Implement proper RBAC
+- **Session Management**: Secure session handling
+
+## Performance Guidelines
+
+### Database
+- **Query Optimization**: Use appropriate indexes
+- **Connection Pooling**: Implement connection pooling
+- **Caching**: Cache frequently accessed data
+
+### API
+- **Response Times**: Target < 200ms for most endpoints
+- **Pagination**: Implement pagination for large datasets
+- **Rate Limiting**: Implement rate limiting for public APIs
+
+## Monitoring and Logging
+
+### Structured Logging
+```python
 logger.info(
-    "User subscription created",
+    "User action completed",
     extra={
-        "person_id": "123",      # Internal snake_case
-        "project_id": "456",     # Internal snake_case
-        "subscription_id": "789", # Internal snake_case
-        "event_type": "subscription_created"
+        "user_id": user.id,
+        "action": "profile_update",
+        "duration_ms": 150,
+        "correlation_id": request.correlation_id
     }
 )
 ```
 
-## Migration Strategy
+### Metrics
+- **Business Metrics**: Track user actions and business KPIs
+- **Technical Metrics**: Monitor performance and errors
+- **Alerting**: Set up alerts for critical issues
 
-### Phase 1: Backend API Standardization
-1. **Update Pydantic models** to use `alias_generator=to_camel`
-2. **Ensure all API responses** return camelCase fields
-3. **Maintain database** snake_case (no changes needed)
+## Code Review Guidelines
 
-### Phase 2: Frontend Cleanup
-1. **Remove field mapping utilities** (no longer needed)
-2. **Update TypeScript interfaces** to match API responses
-3. **Clean up transformation code** in services
+### Review Checklist
+- [ ] Code follows established conventions
+- [ ] Tests are included and passing
+- [ ] Documentation is updated
+- [ ] Security considerations addressed
+- [ ] Performance impact considered
+- [ ] Error handling implemented
 
-### Phase 3: Documentation and Tooling
-1. **ESLint rules** for naming conventions
-2. **API documentation** with consistent examples
-3. **Code review checklists** for naming standards
+### Review Process
+1. **Self Review**: Author reviews their own code first
+2. **Peer Review**: At least one team member reviews
+3. **Automated Checks**: All CI/CD checks must pass
+4. **Approval**: Explicit approval required before merge
 
-## Enforcement Tools
+## Tools and Automation
 
-### Frontend (ESLint):
-```json
-{
-  "rules": {
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        "selector": "variableLike",
-        "format": ["camelCase"]
-      },
-      {
-        "selector": "typeLike",
-        "format": ["PascalCase"]
-      }
-    ]
-  }
-}
-```
+### Pre-commit Hooks
+- **Formatting**: Auto-format code with Black/Prettier
+- **Linting**: Run linters on staged files
+- **Tests**: Run relevant tests before commit
 
-### Backend (Python):
-```python
-# Use pylint or black with naming conventions
-# pyproject.toml
-[tool.pylint.basic]
-good-names = ["id", "db", "pk"]
-function-naming-style = "snake_case"
-class-naming-style = "PascalCase"
-```
-
-## Benefits of Standardization
-
-1. **Eliminates field mapping complexity**
-2. **Reduces integration bugs**
-3. **Improves developer experience**
-4. **Easier code reviews and maintenance**
-5. **Consistent API documentation**
-6. **Better IDE support and autocomplete**
-
-## Implementation Priority
-
-### High Priority (Fix Now):
-- [ ] Subscription API responses (already fixed in frontend)
-- [ ] Person API responses
-- [ ] Project API responses (already correct)
-
-### Medium Priority (Next Sprint):
-- [ ] Admin dashboard APIs
-- [ ] Authentication APIs
-- [ ] Error response formats
-
-### Low Priority (Future):
-- [ ] Legacy endpoint cleanup
-- [ ] Database migration (if needed)
-- [ ] Historical data transformation
-
-## Code Review Checklist
-
-### For API Changes:
-- [ ] All JSON responses use camelCase
-- [ ] URL endpoints use kebab-case
-- [ ] TypeScript interfaces match API responses
-- [ ] No field transformation needed in frontend
-
-### For Frontend Changes:
-- [ ] Variables and functions use camelCase
-- [ ] Component names use PascalCase
-- [ ] File names follow established patterns
-- [ ] No snake_case in TypeScript code
-
-### For Backend Changes:
-- [ ] Python functions use snake_case
-- [ ] Class names use PascalCase
-- [ ] Pydantic models have proper alias configuration
-- [ ] API responses tested for camelCase output
+### CI/CD Pipeline
+- **Quality Gates**: Code must pass all quality checks
+- **Automated Testing**: Full test suite on every PR
+- **Security Scanning**: Automated security vulnerability scanning
+- **Deployment**: Automated deployment to staging/production
 
 ---
 
-**Last Updated**: August 26, 2024  
-**Version**: 1.0  
-**Status**: Active Standard
+## Enforcement
+
+These conventions are enforced through:
+- **Automated tooling** (linters, formatters, pre-commit hooks)
+- **Code review process**
+- **CI/CD pipeline checks**
+- **Team education and documentation**
+
+## Updates
+
+This document should be updated as the project evolves. All changes should be:
+- **Discussed with the team**
+- **Documented in git history**
+- **Communicated to all team members**
+
+---
+
+*Last Updated: August 28, 2025*
+*Version: 1.0*

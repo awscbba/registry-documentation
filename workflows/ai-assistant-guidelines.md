@@ -313,6 +313,14 @@ The project uses **TWO SEPARATE DEPLOYMENT PIPELINES** with distinct responsibil
 - **Testability**: Repositories can be easily mocked for testing
 - **Location**: Repository classes in `src/repositories/` or within service modules
 
+#### **DOMAIN-DRIVEN ROUTER PATTERN**
+
+#### **ROUTER PATTERN**
+
+#### **MAIN APPLICATION FACTORY PATTERN**
+
+
+
 #### **ENFORCEMENT RULES**:
 - ❌ **NEVER** write direct database calls in handlers or controllers
 - ❌ **NEVER** implement business logic directly in API handlers
