@@ -27,6 +27,7 @@
 
 7. **Check for existing implementations first** - Before implementing any feature, search the codebase to identify if similar functionality already exists. Integrate with or enhance existing systems rather than creating duplicates.
 8. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
+9. **AVOID CODE DUPLICATION AT ALL COST** - Always verify that logic to be implemented doesn't exist already or similar behavior already exists in the codebase. Use comprehensive search patterns (grep, file search, code analysis) to identify existing implementations before creating new ones. Refactor and reuse existing code rather than duplicating functionality.
 
 ## Python Development Requirements
 
@@ -216,6 +217,69 @@ Alternatives: [other options considered]
 
 **Remember**: The root directory should only contain repository directories and essential project files (like devbox.json, .gitignore). Never add new files or directories to the root level.
 
+## 🚨 CODE DUPLICATION PREVENTION - CRITICAL
+
+### **ZERO TOLERANCE FOR CODE DUPLICATION**
+
+Code duplication is the root cause of maintenance nightmares, bugs, and architectural decay. This project has **ZERO TOLERANCE** for code duplication.
+
+#### **Mandatory Search Process Before Implementation**
+
+Before implementing ANY functionality, you MUST perform comprehensive searches:
+
+1. **Function/Method Search**:
+   ```bash
+   # Search for similar function names
+   grep -r "def function_name\|async def function_name" src/
+   grep -r "function.*similar_keyword" src/
+   ```
+
+2. **Endpoint Search**:
+   ```bash
+   # Search for similar API endpoints
+   grep -r "@router\." src/routers/
+   grep -r "\.get\|\.post\|\.put\|\.delete" src/routers/
+   ```
+
+3. **Business Logic Search**:
+   ```bash
+   # Search for similar business logic
+   grep -r "business_concept\|domain_term" src/services/
+   grep -r "validation\|calculation\|processing" src/
+   ```
+
+4. **Model Search**:
+   ```bash
+   # Search for similar data models
+   grep -r "class.*Model\|BaseModel" src/models/
+   grep -r "field_name\|similar_field" src/models/
+   ```
+
+#### **Integration Over Duplication**
+
+When you find existing functionality:
+
+- ✅ **EXTEND** existing functions with parameters
+- ✅ **REFACTOR** existing code to be more generic
+- ✅ **COMPOSE** existing functions to create new behavior
+- ✅ **ENHANCE** existing services with new methods
+- ❌ **NEVER** copy-paste existing code
+- ❌ **NEVER** create "similar but slightly different" functions
+
+#### **Documentation of Search Results**
+
+When implementing new functionality, document your search process:
+
+```python
+"""
+Implementation Note: 
+- Searched for similar functionality in src/services/ - none found
+- Checked existing endpoints in src/routers/ - no duplicates
+- Verified no similar models exist in src/models/
+- This is a new, unique implementation
+"""
+```
+
 ## Code Review Requirements
 
 ### Before Any Code Changes:
@@ -313,21 +377,87 @@ The project uses **TWO SEPARATE DEPLOYMENT PIPELINES** with distinct responsibil
 - **Testability**: Repositories can be easily mocked for testing
 - **Location**: Repository classes in `src/repositories/` or within service modules
 
-#### **DOMAIN-DRIVEN ROUTER PATTERN**
+#### **DOMAIN-DRIVEN ROUTER PATTERN** (Required for all API endpoints):
+- **Domain Separation**: Each router represents ONE business domain (people, projects, auth, subscriptions, admin, public)
+- **Domain Expertise**: Routers understand their domain deeply with domain-specific models, validation, and business rules
+- **Domain Boundaries**: Never mix domain logic between routers - each owns its endpoints completely
+- **Domain Services**: Each router depends ONLY on its domain service via dependency injection
+- **Domain Models**: Each domain has its own Pydantic models with domain-specific validation
+- **Intelligent Routing**: RouterService routes requests based on domain context and business requirements
+- **Cross-Domain Operations**: Handled at service layer, not in routers
 
-#### **ROUTER PATTERN**
+#### **ROUTER IMPLEMENTATION STANDARDS**:
+- **File Structure**: `src/routers/{domain}_router.py` (e.g., people_router.py, projects_router.py)
+- **Service Injection**: `domain_service: DomainService = Depends(get_domain_service)`
+- **Prefix Convention**: `router = APIRouter(prefix="/v2/{domain}", tags=["{Domain}"])`
+- **Response Consistency**: Use `create_success_response()`, `create_list_response()`, `create_error_response()`
+- **Error Handling**: Domain-specific error handling with proper HTTP status codes
+- **Documentation**: Each endpoint properly documented with domain context
 
-#### **MAIN APPLICATION FACTORY PATTERN**
+#### **MAIN APPLICATION FACTORY PATTERN** (Required for application initialization):
+- **Centralized App Creation**: Single `create_app()` factory function creates FastAPI application
+- **Router Registration**: All domain routers registered in main app factory using `app.include_router()`
+- **Middleware Stack**: Enterprise middleware applied in correct order (security, rate limiting, CORS, auth)
+- **Exception Handling**: Centralized exception handlers for consistent error responses
+- **Configuration Management**: Environment-based settings loaded and applied centrally
+- **Documentation**: API metadata, version, and documentation configured in factory
+- **Health Endpoints**: Standard health check and root endpoints defined
+- **Service Integration**: Service registry and dependency injection configured at app level
+
+#### **Factory Implementation Standards**:
+```python
+def create_app() -> FastAPI:
+    """Create and configure the FastAPI application."""
+    app = FastAPI(
+        title="People Registry API",
+        version="2.0.0",
+        description="Enterprise API with domain-driven architecture"
+    )
+    
+    # Add middleware in correct order
+    app.add_middleware(SecurityHeadersMiddleware)
+    app.add_middleware(RateLimitingMiddleware)
+    app.add_middleware(EnterpriseMiddleware)
+    app.add_middleware(AuthenticationMiddleware)
+    app.add_middleware(CORSMiddleware)
+    
+    # Register domain routers
+    app.include_router(people_router.router)
+    app.include_router(projects_router.router)
+    app.include_router(auth_router.router)
+    
+    # Add exception handlers
+    app.add_exception_handler(BaseApplicationException, error_handler)
+    
+    return app
+```
+
+#### **Factory Pattern Benefits**:
+- **Testability**: Easy to create test applications with different configurations
+- **Environment Flexibility**: Different configurations for dev/staging/prod
+- **Middleware Consistency**: Ensures all middleware is applied correctly
+- **Router Management**: Centralized router registration prevents missing routes
+- **Configuration Validation**: Single place to validate all application settings
 
 
 
 #### **ENFORCEMENT RULES**:
 - ❌ **NEVER** write direct database calls in handlers or controllers
 - ❌ **NEVER** implement business logic directly in API handlers
+- ❌ **NEVER** mix domain logic between routers
+- ❌ **NEVER** create generic "catch-all" routers or endpoints
+- ❌ **NEVER** inject cross-domain services into routers
+- ❌ **NEVER** duplicate existing code or functionality - ALWAYS search for existing implementations first
 - ✅ **ALWAYS** use services for business logic
 - ✅ **ALWAYS** use repositories for data access
+- ✅ **ALWAYS** follow domain-driven router pattern
+- ✅ **ALWAYS** create domain-specific routers with clear boundaries
+- ✅ **ALWAYS** use domain-specific models and validation
 - ✅ **ALWAYS** follow the established service and repository interfaces
 - ✅ **ALWAYS** register new services in the service registry
+- ✅ **ALWAYS** handle cross-domain operations at service layer, not router layer
+- ✅ **ALWAYS** search codebase comprehensively before implementing new functionality
+- ✅ **ALWAYS** refactor and reuse existing code rather than duplicating
 
 #### Lambda Function Structure - SERVICE REGISTRY (CURRENT):
 

@@ -57,6 +57,10 @@ registry-api/
 - ✅ **Dependency Injection**: Services injected via constructor
 - ✅ **Interface Segregation**: Small, focused interfaces
 - ✅ **Clean Separation**: Repository → Service → Router layers
+- ✅ **Domain-Driven Design**: Each router represents one business domain
+- ✅ **Domain Boundaries**: Clear separation between business contexts (people, projects, auth, subscriptions, admin, public)
+- ✅ **Domain Expertise**: Routers understand their domain deeply with domain-specific models and validation
+- ✅ **Intelligent Routing**: RouterService routes requests based on domain context and business requirements
 
 ## ✅ **Database Migration Completed Successfully**
 
@@ -163,14 +167,70 @@ Based on our implementation, here's the updated architecture status:
 | **Tests**            | ✅ Complete   | 2 files       | 12/12 passing             |
 | **Database Schema**  | ✅ Complete   | 3 tables      | Standardized camelCase    |
 
+## 🏗️ **Domain-Driven Router Architecture**
+
+### **Domain Router Implementation**
+
+Our system implements a sophisticated **Domain-driven Router Pattern** with clear business domain separation:
+
+#### **Domain Routers Implemented**
+
+```
+src/routers/
+├── people_router.py        # Person/User domain
+├── projects_router.py      # Project management domain
+├── auth_router.py          # Authentication/Security domain
+├── subscriptions_router.py # Subscription management domain
+├── admin_router.py         # Administrative operations domain
+└── public_router.py        # Public-facing operations domain
+```
+
+#### **Domain Router Characteristics**
+
+**1. Domain Expertise**
+- Each router understands its business domain deeply
+- Domain-specific models and validation rules
+- Domain-appropriate error handling and responses
+
+**2. Clean Dependencies**
+```python
+# Each router depends ONLY on its domain service
+people_service: PeopleService = Depends(get_people_service)
+projects_service: ProjectsService = Depends(get_projects_service)
+auth_service: AuthService = Depends(get_auth_service)
+```
+
+**3. Domain Boundaries**
+- No cross-domain logic mixing
+- Each router owns its endpoints completely
+- Cross-domain operations handled at service layer
+
+**4. Intelligent Routing**
+```python
+# RouterService implements domain-aware routing
+def _determine_target_function(self, path: str) -> str:
+    # Password reset domain -> API Function (SES permissions)
+    # Auth domain -> Auth Function  
+    # Everything else -> API Function
+```
+
+#### **Domain Router Standards**
+
+**File Structure**: `{domain}_router.py`
+**Prefix Convention**: `/v2/{domain}`
+**Service Injection**: Domain-specific service only
+**Response Format**: Consistent enterprise responses
+**Error Handling**: Domain-appropriate HTTP status codes
+
 ## 🏗️ **Clean Architecture Benefits Already Realized**
 
 ### **Code Quality Improvements**
 
 - **Separation of Concerns**: Clear layer boundaries
+- **Domain Separation**: Clear business domain boundaries
 - **Testability**: Easy to mock dependencies
-- **Maintainability**: Single responsibility per class
-- **Extensibility**: Easy to add new features
+- **Maintainability**: Single responsibility per class and domain
+- **Extensibility**: Easy to add new features within domain boundaries
 
 ### **Development Experience**
 
