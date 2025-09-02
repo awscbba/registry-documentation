@@ -28,6 +28,7 @@
 7. **Check for existing implementations first** - Before implementing any feature, search the codebase to identify if similar functionality already exists. Integrate with or enhance existing systems rather than creating duplicates.
 8. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
 9. **AVOID CODE DUPLICATION AT ALL COST** - Always verify that logic to be implemented doesn't exist already or similar behavior already exists in the codebase. Use comprehensive search patterns (grep, file search, code analysis) to identify existing implementations before creating new ones. Refactor and reuse existing code rather than duplicating functionality.
+10. **USE ENTERPRISE EXCEPTION HANDLER AND LOGGER** - Always use the established enterprise exception handling and logging patterns. Never create custom exception handling or logging mechanisms. Use the centralized EnterpriseLoggingService and structured exception handling with correlation IDs for all operations.
 
 ## Python Development Requirements
 
@@ -216,6 +217,109 @@ Alternatives: [other options considered]
 - **registry-documentation/**: All project documentation, guides, and architectural decisions
 
 **Remember**: The root directory should only contain repository directories and essential project files (like devbox.json, .gitignore). Never add new files or directories to the root level.
+
+## 🏢 ENTERPRISE EXCEPTION HANDLER AND LOGGER - MANDATORY
+
+### **ENTERPRISE LOGGING SERVICE USAGE**
+
+All logging operations MUST use the established EnterpriseLoggingService. Never use print statements, basic Python logging, or custom logging mechanisms.
+
+#### **Required Logging Pattern**:
+
+```python
+from src.services.logging_service import EnterpriseLoggingService, LogLevel, LogCategory, RequestContext
+
+# Initialize logging service (usually injected via dependency injection)
+logging_service = EnterpriseLoggingService()
+
+# Structured logging with correlation IDs
+logging_service.log_structured(
+    level=LogLevel.INFO,
+    category=LogCategory.API_ACCESS,
+    message="User action completed successfully",
+    context=RequestContext(
+        request_id=request.correlation_id,
+        user_id=current_user.id,
+        path=request.path,
+        method=request.method
+    ),
+    additional_data={
+        "action": "profile_update",
+        "duration_ms": 150,
+        "resource_id": resource.id
+    }
+)
+```
+
+#### **Enterprise Exception Handling**:
+
+```python
+from src.exceptions.base_exceptions import (
+    ValidationException,
+    ResourceNotFoundException,
+    AuthenticationException,
+    AuthorizationException
+)
+from src.exceptions.error_handler import error_handler
+
+# Use enterprise exceptions with structured data
+try:
+    result = risky_operation()
+except Exception as e:
+    # Log the error with context
+    logging_service.log_structured(
+        level=LogLevel.ERROR,
+        category=LogCategory.ERROR_HANDLING,
+        message=f"Operation failed: {str(e)}",
+        context=request_context,
+        additional_data={
+            "operation": "risky_operation",
+            "error_type": type(e).__name__,
+            "stack_trace": str(e)
+        }
+    )
+    
+    # Raise appropriate enterprise exception
+    raise ValidationException(
+        message="Operation validation failed",
+        user_message="Unable to process request at this time",
+        error_code="VALIDATION_ERROR",
+        additional_data={"original_error": str(e)}
+    )
+```
+
+#### **Mandatory Logging Categories**:
+
+- **LogCategory.API_ACCESS** - All API endpoint access
+- **LogCategory.AUTHENTICATION** - Authentication events
+- **LogCategory.AUTHORIZATION** - Authorization decisions
+- **LogCategory.BUSINESS_LOGIC** - Business rule execution
+- **LogCategory.DATA_ACCESS** - Database operations
+- **LogCategory.PERFORMANCE** - Performance metrics
+- **LogCategory.SECURITY** - Security events
+- **LogCategory.ERROR_HANDLING** - Error occurrences
+- **LogCategory.SYSTEM_EVENTS** - System-level events
+
+#### **Enterprise Exception Types**:
+
+- **ValidationException** - Input validation failures
+- **ResourceNotFoundException** - Resource not found errors
+- **AuthenticationException** - Authentication failures
+- **AuthorizationException** - Authorization failures
+- **BusinessRuleException** - Business logic violations
+- **ExternalServiceException** - External service failures
+
+### **ENFORCEMENT RULES**:
+
+- ❌ **NEVER** use `print()` statements for debugging or logging
+- ❌ **NEVER** use basic Python `logging` module directly
+- ❌ **NEVER** create custom exception classes without extending enterprise base exceptions
+- ❌ **NEVER** handle exceptions without proper logging and context
+- ✅ **ALWAYS** use EnterpriseLoggingService for all logging operations
+- ✅ **ALWAYS** include correlation IDs in log entries
+- ✅ **ALWAYS** use structured logging with appropriate categories
+- ✅ **ALWAYS** use enterprise exception types with user-safe messages
+- ✅ **ALWAYS** log errors with full context before raising exceptions
 
 ## 🚨 CODE DUPLICATION PREVENTION - CRITICAL
 
@@ -448,6 +552,8 @@ def create_app() -> FastAPI:
 - ❌ **NEVER** create generic "catch-all" routers or endpoints
 - ❌ **NEVER** inject cross-domain services into routers
 - ❌ **NEVER** duplicate existing code or functionality - ALWAYS search for existing implementations first
+- ❌ **NEVER** create custom exception handling or logging mechanisms
+- ❌ **NEVER** use print statements, basic logging, or ad-hoc error handling
 - ✅ **ALWAYS** use services for business logic
 - ✅ **ALWAYS** use repositories for data access
 - ✅ **ALWAYS** follow domain-driven router pattern
@@ -458,6 +564,9 @@ def create_app() -> FastAPI:
 - ✅ **ALWAYS** handle cross-domain operations at service layer, not router layer
 - ✅ **ALWAYS** search codebase comprehensively before implementing new functionality
 - ✅ **ALWAYS** refactor and reuse existing code rather than duplicating
+- ✅ **ALWAYS** use EnterpriseLoggingService for all logging operations
+- ✅ **ALWAYS** use structured exception handling with correlation IDs
+- ✅ **ALWAYS** follow enterprise error handling patterns
 
 #### Lambda Function Structure - SERVICE REGISTRY (CURRENT):
 

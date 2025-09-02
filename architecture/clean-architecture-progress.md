@@ -188,11 +188,13 @@ src/routers/
 #### **Domain Router Characteristics**
 
 **1. Domain Expertise**
+
 - Each router understands its business domain deeply
 - Domain-specific models and validation rules
 - Domain-appropriate error handling and responses
 
 **2. Clean Dependencies**
+
 ```python
 # Each router depends ONLY on its domain service
 people_service: PeopleService = Depends(get_people_service)
@@ -201,16 +203,18 @@ auth_service: AuthService = Depends(get_auth_service)
 ```
 
 **3. Domain Boundaries**
+
 - No cross-domain logic mixing
 - Each router owns its endpoints completely
 - Cross-domain operations handled at service layer
 
 **4. Intelligent Routing**
+
 ```python
 # RouterService implements domain-aware routing
 def _determine_target_function(self, path: str) -> str:
     # Password reset domain -> API Function (SES permissions)
-    # Auth domain -> Auth Function  
+    # Auth domain -> Auth Function
     # Everything else -> API Function
 ```
 

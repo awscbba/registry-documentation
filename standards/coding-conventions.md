@@ -13,6 +13,7 @@ This document establishes coding standards and conventions for the People Regist
 - **Simplicity**: Prefer simple, clear solutions over complex ones
 - **DRY Principle**: Don't Repeat Yourself - extract common functionality
 - **ZERO CODE DUPLICATION**: Always verify that logic to be implemented doesn't exist already or similar behavior already exists in the codebase
+- **Enterprise Exception Handling**: Always use established enterprise exception handling and logging patterns
 - **SOLID Principles**: Follow SOLID design principles for maintainable code
 
 ### Architecture Patterns
@@ -244,30 +245,73 @@ def create_user(
     pass
 ```
 
-### Error Handling
+### Enterprise Exception Handling and Logging
 
-- **Custom Exceptions**: Use domain-specific exception classes
-- **Structured Logging**: Use structured JSON logging with correlation IDs
-- **User-Safe Messages**: Never expose internal details in error responses
+#### **Mandatory Enterprise Logging**
+
+Always use the EnterpriseLoggingService for all logging operations:
 
 ```python
-class ServiceRegistryError(Exception):
-    def __init__(self, message: str, user_message: str = None, error_code: str = None):
-        super().__init__(message)
-        self.user_message = user_message or "An internal error occurred"
-        self.error_code = error_code
+from src.services.logging_service import EnterpriseLoggingService, LogLevel, LogCategory, RequestContext
 
-# Usage
+# Structured logging with correlation IDs
+logging_service = EnterpriseLoggingService()
+logging_service.log_structured(
+    level=LogLevel.INFO,
+    category=LogCategory.API_ACCESS,
+    message="User action completed",
+    context=RequestContext(
+        request_id=request.correlation_id,
+        user_id=current_user.id,
+        path=request.path,
+        method=request.method
+    ),
+    additional_data={
+        "action": "profile_update",
+        "duration_ms": 150
+    }
+)
+```
+
+#### **Enterprise Exception Handling**
+
+Use established enterprise exception types with proper logging:
+
+```python
+from src.exceptions.base_exceptions import ValidationException, ResourceNotFoundException
+from src.exceptions.error_handler import error_handler
+
 try:
     result = risky_operation()
 except Exception as e:
-    logger.error(f"Operation failed: {str(e)}", extra={"correlation_id": request_id})
-    raise ServiceRegistryError(
+    # Log with full context
+    logging_service.log_structured(
+        level=LogLevel.ERROR,
+        category=LogCategory.ERROR_HANDLING,
+        message=f"Operation failed: {str(e)}",
+        context=request_context,
+        additional_data={
+            "operation": "risky_operation",
+            "error_type": type(e).__name__
+        }
+    )
+
+    # Raise enterprise exception
+    raise ValidationException(
         message=f"Database operation failed: {str(e)}",
         user_message="Unable to process request at this time",
-        error_code="DB_ERROR"
+        error_code="DB_ERROR",
+        additional_data={"original_error": str(e)}
     )
 ```
+
+#### **Enterprise Standards**
+
+- **Structured Logging**: Use JSON logging with correlation IDs
+- **User-Safe Messages**: Never expose internal details in error responses
+- **Exception Categories**: Use appropriate enterprise exception types
+- **Context Preservation**: Always include request context in logs
+- **Performance Tracking**: Log operation duration and resource usage
 
 ### Documentation
 
