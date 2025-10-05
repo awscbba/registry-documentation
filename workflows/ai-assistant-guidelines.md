@@ -29,6 +29,13 @@
 8. **Test-Driven Development approach** - Create tests to identify potential issues with features. When possible, write tests first, then implement the logic that satisfies the test requirements.
 9. **AVOID CODE DUPLICATION AT ALL COST** - Always verify that logic to be implemented doesn't exist already or similar behavior already exists in the codebase. Use comprehensive search patterns (grep, file search, code analysis) to identify existing implementations before creating new ones. Refactor and reuse existing code rather than duplicating functionality.
 10. **USE ENTERPRISE EXCEPTION HANDLER AND LOGGER** - Always use the established enterprise exception handling and logging patterns. Never create custom exception handling or logging mechanisms. Use the centralized EnterpriseLoggingService and structured exception handling with correlation IDs for all operations.
+11. **NEVER CHANGE ARCHITECTURAL DECISIONS WITHOUT ANALYSIS** - Before suggesting any architectural changes (SSR vs Static, framework changes, deployment methods), ALWAYS analyze the existing business logic and functionality first. Understand WHY the current architecture exists by examining:
+    - Dynamic routing requirements (`/subscribe/[projectId]`)
+    - Authentication and authorization flows
+    - Real-time features and server-side validation
+    - SEO and performance requirements
+    - Security-critical operations
+    Never switch between SSR/Static, change build configurations, or modify deployment strategies without explicit understanding of business requirements.
 
 ## Python Development Requirements
 
