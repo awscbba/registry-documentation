@@ -11,6 +11,9 @@
 5. **NEVER delete branches without confirmation**
 6. **NEVER force push (git push --force)**
 7. **NEVER touch the root folder** - Do not create, update, or modify any files or directories in the project root. Only work within repository directories: `registry-api/`, `registry-frontend/`, `registry-infrastructure/`, `registry-documentation/`
+8. **NEVER create Pull Requests without explicit authorization**
+9. **NEVER auto-merge Pull Requests to main branch**
+10. **NEVER make changes directly to production without approval**
 
 ## ✅ ALWAYS DO THESE ACTIONS
 
@@ -22,6 +25,9 @@
 4. **Always confirm before pushing any code**
 5. **Always follow the established naming conventions**
 6. **Always use uv for Python package management** - NEVER use pip, venv, or direct python commands
+7. **Always wait for explicit authorization before creating Pull Requests**
+8. **Always push feature branches and wait for approval to create PRs**
+9. **Always let the user decide when to merge to production**
 
 ### Implementation Principles:
 
