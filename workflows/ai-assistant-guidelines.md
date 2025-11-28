@@ -231,6 +231,33 @@ Alternatives: [other options considered]
 
 **Remember**: The root directory should only contain repository directories and essential project files (like devbox.json, .gitignore). Never add new files or directories to the root level.
 
+## Code Quality and Standards
+
+### ⚠️ CRITICAL: NO TEMPORARY FIXES OR WORKAROUNDS
+**This is an enterprise-grade product. ALL implementations must be production-ready and maintainable.**
+
+1. **NEVER implement temporary fixes, workarounds, or hardcoded solutions**
+   - No hardcoded user IDs, emails, or specific values
+   - No "TODO: fix this later" comments without immediate resolution
+   - No shortcuts that compromise long-term maintainability
+   
+2. **Always implement proper, scalable solutions**
+   - Use configuration files for environment-specific values
+   - Implement proper database schemas and relationships
+   - Follow established patterns and architecture
+   - Write code that works for ALL users, not specific cases
+   
+3. **If a proper solution requires more time:**
+   - Explain the situation to the user
+   - Propose the correct implementation approach
+   - Get approval before proceeding
+   - Document any technical debt explicitly
+   
+4. **Rationale:**
+   - Temporary fixes accumulate and become permanent
+   - They make debugging and maintenance extremely difficult
+   - They hide the real problems instead of solving them
+   - They compromise product quality and reliability
 ## 🏢 ENTERPRISE EXCEPTION HANDLER AND LOGGER - MANDATORY
 
 ### **ENTERPRISE LOGGING SERVICE USAGE**
@@ -409,6 +436,7 @@ Implementation Note:
 6. Use proper commit messages
 7. **Verify correct directory placement**
 8. **Consider test coverage** - Identify what tests are needed and whether to write tests first
+9. **Verify no temporary fixes** - Ensure the solution is production-ready and scalable
 
 ### Implementation Strategy:
 
