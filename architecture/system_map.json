@@ -1,0 +1,258 @@
+{
+  "system_info": {
+    "name": "People Registry System",
+    "architecture": "Service Registry Pattern",
+    "last_updated": "2025-08-17",
+    "status": "Production",
+    "code_reduction": "87%",
+    "main_handler_lines": 366,
+    "legacy_handler_lines": 2797,
+    "total_services": 15,
+    "total_tests": 551
+  },
+  "deployment_architecture": {
+    "type": "Dual Pipeline System",
+    "infrastructure_pipeline": {
+      "location": "registry-infrastructure/",
+      "technology": "AWS CDK",
+      "purpose": "Provisions AWS resources"
+    },
+    "application_pipeline": {
+      "location": "registry-api/",
+      "technology": "Docker containers",
+      "purpose": "Lambda deployment"
+    },
+    "critical_rule": "Never deploy application code from infrastructure pipeline"
+  },
+  "postal_code_architecture": {
+    "field_transformations": {
+      "frontend": "postalCode (camelCase)",
+      "api_layer": "postalCode (camelCase)",
+      "pydantic_creation": "postalCode (camelCase) - REQUIRED",
+      "pydantic_internal": "postal_code (snake_case)",
+      "dynamodb_storage": "postal_code (snake_case)"
+    },
+    "supported_variants": [
+      "postal_code",
+      "postalCode", 
+      "zip_code",
+      "zipCode"
+    ],
+    "normalization_services": [
+      "DefensiveDynamoDBService",
+      "UserRepository"
+    ],
+    "validation_service": "src/utils/validation_utils.py"
+  },
+  "service_registry": {
+    "manager": "src/services/service_registry_manager.py",
+    "services": {
+      "people": {
+        "purpose": "User management",
+        "repository": "UserRepository"
+      },
+      "projects": {
+        "purpose": "Project operations",
+        "repository": "ProjectRepository"
+      },
+      "subscriptions": {
+        "purpose": "Event subscriptions"
+      },
+      "auth": {
+        "purpose": "Authentication & JWT"
+      },
+      "roles": {
+        "purpose": "Role-based access control"
+      },
+      "email": {
+        "purpose": "Email operations",
+        "aws_service": "SES"
+      },
+      "password_reset": {
+        "purpose": "Password reset workflow"
+      },
+      "audit": {
+        "purpose": "Audit logging"
+      },
+      "logging": {
+        "purpose": "Centralized logging"
+      },
+      "rate_limiting": {
+        "purpose": "API protection"
+      },
+      "metrics": {
+        "purpose": "Performance metrics"
+      },
+      "cache": {
+        "purpose": "Caching service"
+      },
+      "performance_metrics": {
+        "purpose": "Real-time metrics"
+      },
+      "database_optimization": {
+        "purpose": "Query optimization"
+      },
+      "project_administration": {
+        "purpose": "Admin operations"
+      }
+    }
+  },
+  "repository_layer": {
+    "base_repository": {
+      "file": "src/repositories/base_repository.py",
+      "pattern": "Generic repository with type safety",
+      "operations": ["CRUD", "list_all", "batch operations"]
+    },
+    "user_repository": {
+      "file": "src/repositories/user_repository.py",
+      "inherits": "BaseRepository[Person]",
+      "critical_method": "_to_entity()",
+      "postal_code_handling": "Follows DefensiveDynamoDBService pattern"
+    }
+  },
+  "data_models": {
+    "address_model": {
+      "file": "src/models/person.py",
+      "internal_field": "postal_code",
+      "alias_field": "postalCode",
+      "creation_pattern": "Address(postalCode='12345')",
+      "access_pattern": "person.address.postal_code",
+      "api_response_pattern": "model_dump(by_alias=True)"
+    },
+    "person_model": {
+      "file": "src/models/person.py",
+      "includes": "Address model"
+    }
+  },
+  "data_services": {
+    "defensive_dynamodb_service": {
+      "file": "src/services/defensive_dynamodb_service.py",
+      "purpose": "Robust DynamoDB operations with data normalization",
+      "key_methods": [
+        "_item_to_person()",
+        "_normalize_address_for_storage()",
+        "_person_to_item()"
+      ],
+      "postal_code_logic": {
+        "reading": "Convert postal_code → postalCode for Pydantic",
+        "writing": "Convert postalCode → postal_code for storage"
+      }
+    }
+  },
+  "lambda_functions": {
+    "main_api_function": {
+      "name": "PeopleRegisterInfrastruct-PeopleApiFunction67A8223-xlC79QhrsKBe",
+      "entry_point": "main.py → modular_api_handler.py",
+      "architecture": "Service Registry"
+    },
+    "auth_function": {
+      "name": "AuthFunction",
+      "purpose": "Authentication handling"
+    },
+    "router_function": {
+      "name": "RouterFunction", 
+      "purpose": "Request routing"
+    }
+  },
+  "environment_variables": {
+    "PEOPLE_TABLE_NAME": "PeopleTable",
+    "PROJECTS_TABLE_NAME": "ProjectsTable",
+    "SES_FROM_EMAIL": "noreply@cbba.cloud.org.bo",
+    "FRONTEND_URL": "https://d28z2il3z2vmpc.cloudfront.net"
+  },
+  "dynamodb_tables": {
+    "PeopleTable": {
+      "purpose": "User data",
+      "postal_code_field": "postal_code (snake_case)"
+    },
+    "ProjectsTable": {
+      "purpose": "Project data"
+    },
+    "AuditLogsTable": {
+      "purpose": "Audit trail"
+    },
+    "PasswordResetTokensTable": {
+      "purpose": "Reset tokens"
+    }
+  },
+  "critical_files": {
+    "postal_code_normalization": "src/services/defensive_dynamodb_service.py",
+    "address_validation": "src/utils/validation_utils.py",
+    "service_registry": "src/services/service_registry_manager.py",
+    "base_repository": "src/repositories/base_repository.py",
+    "active_handler": "src/handlers/modular_api_handler.py",
+    "legacy_handler": "src/handlers/versioned_api_handler.py"
+  },
+  "testing_architecture": {
+    "address_tests": "tests/test_address_field_standardization.py",
+    "service_registry_tests": "tests/test_service_registry_*.py",
+    "critical_integration": "tests/test_critical_integration.py",
+    "total_tests": 551,
+    "test_categories": [
+      "Address field standardization",
+      "Service registry",
+      "Critical integration", 
+      "Repository patterns"
+    ]
+  },
+  "debugging_patterns": {
+    "common_issues": {
+      "health_check_error": {
+        "symptom": "HealthCheck object has no attribute 'get'",
+        "cause": "Health check response format mismatch",
+        "solution": "Use HealthCheckConverter in service_registry_manager.py"
+      },
+      "email_lookup_error": {
+        "symptom": "Password reset requested for non-existent email",
+        "cause": "Repository _to_entity() failing due to postal code validation",
+        "solution": "Check address field normalization in repository"
+      },
+      "pydantic_validation_error": {
+        "symptom": "Pydantic validation error for Address",
+        "cause": "Wrong field name when creating Address objects",
+        "solution": "Use postalCode (camelCase) when creating Address(**data)"
+      }
+    },
+    "debugging_tools": {
+      "cloudwatch_logs": "/aws/lambda/PeopleRegisterInfrastruct-PeopleApiFunction67A8223-xlC79QhrsKBe",
+      "health_endpoints": ["/health", "/health/services"],
+      "service_registry_endpoints": ["/registry/services", "/registry/config"]
+    }
+  },
+  "critical_rules": {
+    "never_do": [
+      "Create duplicate postal code normalization logic",
+      "Use different field name patterns for address data",
+      "Deploy application code from infrastructure pipeline",
+      "Modify legacy versioned_api_handler.py",
+      "Create new address handling without following established patterns"
+    ],
+    "always_do": [
+      "Check existing implementations before creating new ones",
+      "Follow the postal code normalization patterns",
+      "Use Service Registry architecture for new features",
+      "Write tests for address field handling",
+      "Reference system map before making changes"
+    ],
+    "before_implementing": [
+      "Search codebase for existing similar functionality",
+      "Check if it fits into existing service architecture", 
+      "Verify postal code handling requirements",
+      "Review system map for architectural patterns",
+      "Ensure no duplication of existing logic"
+    ]
+  },
+  "performance_metrics": {
+    "code_reduction_percentage": 87,
+    "response_time_target": "200ms",
+    "service_health_check_target": "50ms",
+    "current_test_count": 551,
+    "services_count": 15
+  },
+  "monitoring_endpoints": {
+    "system_health": "GET /health",
+    "service_health": "GET /health/services", 
+    "service_discovery": "GET /registry/services",
+    "configuration": "GET /registry/config"
+  }
+}

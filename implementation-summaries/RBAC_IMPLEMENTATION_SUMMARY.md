@@ -33,7 +33,26 @@ super_admin_emails = [
 is_super_admin = await roles_service.user_is_super_admin(user_id)
 ```
 
-## 🏗️ Implementation Components
+## 🔄 Recent Updates
+
+### September 28, 2025 - System Configuration Fix
+**Critical Fix**: Resolved systemic RBAC design flaw affecting all admin-level roles.
+
+**Issue**: Admin roles had functional permissions but lacked `SYSTEM_CONFIG` permission required for `/v2/admin/*` endpoints, causing 403 Forbidden errors.
+
+**Solution**: Added `Permission.SYSTEM_CONFIG` to:
+- ✅ **MODERATOR** role - For project management admin access
+- ✅ **AUDITOR** role - For compliance dashboard access (read-only)
+- ✅ **ADMIN** role - For full admin operations access
+
+**Impact**: 
+- Fixes subscription deletion issues in admin panel
+- Enables proper multi-tier admin hierarchy
+- Resolves project moderation access problems
+- Ensures compliance dashboard accessibility
+
+See: [RBAC System Config Comprehensive Fix](../fixes/RBAC_SYSTEM_CONFIG_COMPREHENSIVE_FIX.md)
+
 
 ### 1. Database Schema
 - **Roles Table**: `people-registry-roles`
@@ -44,10 +63,28 @@ is_super_admin = await roles_service.user_is_super_admin(user_id)
   - Complete audit trail of admin actions
   - Compliance and security monitoring
 
-### 2. Role System
-- **4 Role Types**: USER, MODERATOR, ADMIN, SUPER_ADMIN
-- **15+ Permissions**: Granular access control
-- **Role Hierarchy**: Logical permission inheritance
+### 2. Current Role System (Updated September 2025)
+
+| Role | Level | Admin Access | Key Permissions | Use Cases |
+|------|-------|--------------|-----------------|-----------|
+| **GUEST** | 0 | ❌ | Public read-only | Unauthenticated users |
+| **USER** | 1 | ❌ | Own data CRUD, project subscription | Standard authenticated users |
+| **MODERATOR** | 2 | ✅ Limited | Project management, content moderation | Project managers, content moderators |
+| **AUDITOR** | 3 | ✅ Read-only | Compliance dashboards, audit reports | Compliance officers, auditors |
+| **ADMIN** | 4 | ✅ Full | User management, system administration | System administrators |
+| **SUPER_ADMIN** | 5 | ✅ Full | All permissions, system configuration | Technical leads, system owners |
+| **SYSTEM** | 6 | ✅ Service | Internal system operations | Service accounts, automation |
+
+#### Critical Permissions Matrix
+| Permission | USER | MODERATOR | AUDITOR | ADMIN | SUPER_ADMIN |
+|------------|------|-----------|---------|-------|-------------|
+| `SYSTEM_CONFIG` | ❌ | ✅ | ✅ | ✅ | ✅ |
+| `SUBSCRIPTION_DELETE_ALL` | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `USER_DELETE_ALL` | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `PROJECT_UPDATE_ALL` | ❌ | ✅ | ❌ | ✅ | ✅ |
+| `SYSTEM_AUDIT` | ❌ | ❌ | ✅ | ✅ | ✅ |
+
+**Note**: `SYSTEM_CONFIG` permission is required for all `/v2/admin/*` endpoint access.
 
 ### 3. API Components
 - **Role Models** (`src/models/roles.py`)
