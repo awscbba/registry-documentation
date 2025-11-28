@@ -276,8 +276,6 @@ registry-api/
 # Code changes in registry-api/ trigger container rebuild
 cd registry-infrastructure/
 source .venv/bin/activate
-npx cdk deploy --hotswap-fallback  # Fast Lambda updates
-# OR
 npx cdk deploy                     # Full stack deployment
 ```
 
@@ -292,9 +290,8 @@ npx cdk deploy                     # Full stack deployment
 ##### Code Update Workflow:
 1. **Make changes** in `registry-api/` repository
 2. **Commit and push** changes to feature branch
-3. **Deploy infrastructure** from `registry-infrastructure/` to update Lambda
-4. **Container rebuild** happens automatically during CDK deployment
-5. **Lambda functions** get updated with new container image
+3. **Container rebuild** happens automatically during CDK deployment
+4. **Lambda functions** get updated with new container image
 
 ##### Deployment Dependencies:
 - **Source Code**: `registry-api/` repository
@@ -303,7 +300,6 @@ npx cdk deploy                     # Full stack deployment
 - **Container Registry**: ECR automatically managed by CDK
 
 ##### Common Issues:
-- **Code changes not reflected**: Need to run CDK deploy to rebuild containers
 - **Lambda function not updating**: Check CDK deployment status
 - **Container build failures**: Check Dockerfile and dependencies
 - **Permission issues**: Verify IAM roles and policies
