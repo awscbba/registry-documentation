@@ -46,6 +46,76 @@ frontend:
       - node_modules/**/*
 ```
 
+## Environment Variables
+
+### Required Variables
+
+Configure these in **AWS Amplify Console** → **App Settings** → **Environment variables**:
+
+| Variable | Description | Required | Default | Example |
+|----------|-------------|----------|---------|---------|
+| `PUBLIC_API_URL` | Backend API Gateway URL | ✅ Yes | None | `https://2t9blvt2c1.execute-api.us-east-1.amazonaws.com/prod` |
+| `PUBLIC_SITE_URL` | Frontend base URL | ⚠️ Optional | `https://registry.cloud.org.bo` | `https://registry.cloud.org.bo` |
+
+### Configuration Steps
+
+1. Open [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
+2. Select your app (e.g., `d2df6u91uqaaay`)
+3. Navigate to **App settings** → **Environment variables**
+4. Click **Manage variables**
+5. Add the required variables:
+   - **Key**: `PUBLIC_API_URL`
+   - **Value**: Your API Gateway URL
+   - **Key**: `PUBLIC_SITE_URL` (optional)
+   - **Value**: Your production domain
+
+### How Environment Variables Work
+
+During the Amplify build process:
+- Environment variables are automatically injected into the build
+- Astro reads them via `import.meta.env.PUBLIC_*`
+- Variables prefixed with `PUBLIC_` are exposed to the client-side code
+- The `getSiteUrl()` helper uses `PUBLIC_SITE_URL` for absolute URLs
+
+### Branch-Specific Variables
+
+Amplify supports **branch-specific overrides**:
+- Set different values for `main`, `staging`, `dev` branches
+- Useful for pointing to different API environments
+- Preview branches automatically use relative URLs (no configuration needed)
+
+### Variable Usage in Code
+
+```typescript
+// src/config/api.ts
+export const API_CONFIG = {
+  BASE_URL: import.meta.env.PUBLIC_API_URL || 'https://default-api.com',
+  SITE_URL: import.meta.env.PUBLIC_SITE_URL || 'https://registry.cloud.org.bo',
+};
+
+// Smart URL generation - works on any domain
+export const getSiteUrl = (path: string): string => {
+  if (typeof window !== 'undefined') {
+    return path; // Relative path in browser
+  }
+  return `${API_CONFIG.SITE_URL}${path}`; // Absolute for SSR
+};
+```
+
+### Why PUBLIC_SITE_URL is Optional
+
+The `getSiteUrl()` helper uses **relative paths in the browser**, which means:
+- ✅ Works on Amplify preview URLs: `https://branch-name.d2df6u91uqaaay.amplifyapp.com`
+- ✅ Works on production domain: `https://registry.cloud.org.bo`
+- ✅ Works on localhost: `http://localhost:4321`
+- ✅ No per-branch configuration needed
+
+The `PUBLIC_SITE_URL` is only used for:
+- Server-side rendering (SSR) contexts
+- Generating absolute URLs in emails
+- Open Graph meta tags
+- Sitemap generation
+
 ## Key Requirements
 
 ### 1. Adapter Configuration
@@ -173,7 +243,13 @@ npm install astro-aws-amplify
 - ✅ Admin panels accessible
 - ✅ SSR features operational
 
+## Related Documentation
+
+- [Frontend Environment Configuration](./environment-configuration.md) - Detailed environment variable setup
+- [API Configuration](../api/configuration.md) - Backend API endpoints
+- [Deployment Guide](../ci-cd/deployment-guide.md) - Full deployment process
+
 ---
 
-**Last Updated**: October 5, 2025  
-**Verified Working**: `feature/fix-subscription-pages`, `feature/fix-super-admin-roles`
+**Last Updated**: November 29, 2025  
+**Verified Working**: `feature/fix-subscription-pages`, `feature/fix-super-admin-roles`, `fix/login-link-subscription-form`
