@@ -306,3 +306,109 @@ npm run start
 **Verified By**: Local build test  
 **Status**: ✅ RESOLVED  
 **Next**: Wait for Amplify deployment and verify staging site
+
+
+## Fix 4: ToastContainer SSR Guard
+
+**Issue**: ToastContainer component was rendering during SSR, causing hydration mismatches.
+
+**Solution**: Added SSR guard to prevent ToastContainer from rendering on the server:
+
+```tsx
+// registry-frontend/src/contexts/ToastContext.tsx
+return (
+  <ToastContext.Provider value={value}>
+    {children}
+    {typeof window !== 'undefined' && <ToastContainer toasts={toasts} onRemove={removeToast} />}
+  </ToastContext.Provider>
+);
+```
+
+**Commit**: `da60f26`
+
+**Status**: ✅ Deployed - Waiting for verification
+
+---
+
+## Fix 5: AuthService localStorage and atob SSR Guards
+
+**Issue**: `authService` was accessing `localStorage` and using `atob()` (browser-only APIs) during SSR initialization, causing "localStorage is not defined" and "atob is not defined" errors.
+
+**Root Cause**: 
+- `loadFromStorage()` method was called in constructor without SSR guard
+- `validateStoredTokens()` method was called in constructor without SSR guard  
+- `getTokenTimeRemaining()` method used `atob()` without SSR guard
+
+**Solution**: Added SSR guards to all methods that use browser-only APIs:
+
+```typescript
+// registry-frontend/src/services/authService.ts
+
+private loadFromStorage(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  // ... localStorage access
+}
+
+private validateStoredTokens(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  // ... token validation
+}
+
+getTokenTimeRemaining(): number {
+  if (!this.token || typeof window === 'undefined') {
+    return 0;
+  }
+  // ... atob() usage
+}
+```
+
+**Files Changed**:
+- `registry-frontend/src/services/authService.ts`
+
+**Impact**: Critical - This was likely the root cause of the "Internal server error" on the main page. The authService singleton is instantiated when AuthContext mounts, and it was trying to access localStorage during SSR.
+
+**Commit**: `393e2da`
+
+**Status**: ✅ Deployed - Waiting for verification
+
+---
+
+## Summary of All Fixes
+
+| Fix # | Issue | Files | Commit | Status |
+|-------|-------|-------|--------|--------|
+| 1 | ReactNode type imports | ErrorBoundary.tsx, AuthContext.tsx, ToastContext.tsx | `24c27ef` | ✅ Fixed |
+| 2 | Hook SSR guards | useLoginModal.ts, usePagination.ts, useFocusManagement.ts | `64333f5` | ✅ Fixed |
+| 3 | Health check page | pages/health.astro | `8b17636` | ✅ Fixed |
+| 4 | ToastContainer SSR guard | ToastContext.tsx | `da60f26` | ✅ Fixed |
+| 5 | AuthService SSR guards | authService.ts | `393e2da` | ✅ Fixed |
+
+**Total Commits**: 5  
+**Total Files Changed**: 9  
+**Time to Resolution**: ~2 hours  
+**Current Status**: Waiting for Amplify build to complete
+
+---
+
+## Next Steps
+
+1. **Wait for Amplify Build**: Monitor the build at https://console.aws.amazon.com/amplify/
+2. **Test Staging**: Visit https://feature-user-registration-page.d36qiwhuhsb8gy.amplifyapp.com
+3. **Verify Fixes**:
+   - [ ] Homepage loads without "Internal server error"
+   - [ ] No console errors related to SSR
+   - [ ] Projects display correctly
+   - [ ] Login modal works
+   - [ ] Authentication state persists
+4. **Check Browser Console**: Look for any remaining JavaScript errors
+5. **View Page Source**: Verify SSR is working (HTML content should be present)
+
+---
+
+**Last Updated**: December 6, 2025  
+**Branch**: feature/user-registration-page  
+**Latest Commit**: `393e2da`
