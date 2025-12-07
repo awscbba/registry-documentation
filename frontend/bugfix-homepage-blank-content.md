@@ -20,7 +20,9 @@ After the frontend architecture refactor, the homepage was displaying only the h
 
 ## Root Cause
 
-The `useProjects` hook was calling `projectApi.getAllProjects()` which requires authentication (`addRequiredAuthHeaders()`). Since visitors to the homepage are typically not logged in, the API call was failing silently or returning an empty array.
+**Primary Issue**: The `useProjects` hook was calling `projectApi.getAllProjects()` which requires authentication (`addRequiredAuthHeaders()`). Since visitors to the homepage are typically not logged in, the API call was failing silently or returning an empty array.
+
+**Secondary Issue** (discovered after initial fix): The status filter in `useProjects` was only checking for `'pending'`, `'active'`, and `'ongoing'` statuses, but the API also returns projects with `'completed'` status. These completed projects were being filtered out entirely, causing the homepage to appear blank even after fixing the authentication issue.
 
 ### Code Issue
 
@@ -39,7 +41,11 @@ const allProjects = await projectApi.getPublicProjects();
 
 ## Solution
 
+**Fix 1 - Authentication Issue**:
 Changed the `useProjects` hook to use `projectApi.getPublicProjects()` instead of `getAllProjects()`. The public endpoint doesn't require authentication and is designed for displaying projects on the homepage.
+
+**Fix 2 - Status Filter Issue**:
+Updated the status filter to include `'completed'` projects in the display. Completed projects are now shown in the "ongoing" section for reference, so users can see past projects.
 
 ### Why This Happened
 
