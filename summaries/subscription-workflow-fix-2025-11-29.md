@@ -7,7 +7,7 @@ Users reported a workflow bug in the subscription form:
 1. **Logged-in users still see the form**: When a user logs in and returns to the subscription page, they still see the full subscription form and "Login here" link, even though the system knows who they are.
 
 2. **Already subscribed users see the form**: If a user is already subscribed to a project, they still see the subscription fields and button instead of a message confirming their existing subscription.
-
+https://registry.cloud.org.bo/subscribe/speakers-sesion-final-2025/
 ## Expected Behavior
 
 ### For Logged-in Users (Not Subscribed)
